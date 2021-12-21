@@ -14,8 +14,11 @@ main()
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      float gray = (x * X_SCALING + y * Y_SCALING) / 2.0;
-      canvas.setColor(x, y, gray);
+      float r = x * X_SCALING;
+      float g = y * Y_SCALING;
+      float b = 0.25;
+
+      canvas.setColor(x, y, Color(r, g, b));
     }
   }
 

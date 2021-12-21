@@ -5,7 +5,7 @@ PPM::PPM(int width, int height)
 {
   this->width = width;
   this->height = height;
-  this->buffer = std::vector<float>(width * height);
+  this->buffer = std::vector<Color>(width * height);
 }
 
 void
@@ -16,13 +16,13 @@ PPM::dump() const
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      int color = static_cast<int>(255.9999 * getColor(x, y));
-      printf("%d %d %d\n", color, color, color);
+      Color color = 255.9999 * getColor(x, y);
+      printf("%d %d %d\n", (int)color.r, (int)color.g, (int)color.b);
     }
   }
 }
 
-float
+Color
 PPM::getColor(int x, int y) const
 {
   int index = getIndex(x, y);
@@ -30,7 +30,7 @@ PPM::getColor(int x, int y) const
 }
 
 void
-PPM::setColor(int x, int y, float color)
+PPM::setColor(int x, int y, Color color)
 {
   int index = getIndex(x, y);
   buffer[index] = color;
