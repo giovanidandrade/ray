@@ -27,6 +27,12 @@ operator*(const float s, const Color& color)
   return Color(s * color.r, s * color.g, s * color.b);
 }
 
+Color
+Color::operator+(const Color& c) const
+{
+  return Color(r + c.r, g + c.g, b + c.b);
+}
+
 void
 Color::dump() const
 {

@@ -1,10 +1,19 @@
+#include "camera.h"
 #include "ppm.h"
+#include "scene.h"
+#include <cstdio>
 
 int
 main()
 {
-  int width = 256;
-  int height = 256;
+  float aspect_ratio = 16.0 / 9.0;
+
+  int width = 400;
+  int height = static_cast<int>(width / aspect_ratio);
+
+  float viewport_height = 2.0;
+  float focal_length = 1.0;
+  Camera camera(viewport_height, aspect_ratio, focal_length);
 
   float X_SCALING = 1.0 / (width - 1);
   float Y_SCALING = 1.0 / (height - 1);
@@ -12,15 +21,19 @@ main()
   PPM canvas(width, height);
 
   for (int y = 0; y < height; ++y) {
+    fprintf(stderr, "Scanlines done: %d\n", y);
     for (int x = 0; x < width; ++x) {
-      float r = x * X_SCALING;
-      float g = 1.0 - y * Y_SCALING;
-      float b = 0.25;
+      float u = x * X_SCALING;
+      float v = 1 - y * Y_SCALING;
 
-      canvas.setColor(x, y, Color(r, g, b));
+      Ray ray = camera.cast(u, v);
+      Color color = getColor(ray);
+
+      canvas.setColor(x, y, color);
     }
   }
 
+  fprintf(stderr, "Scanning done. Printing.\n");
   canvas.dump();
   return 0;
 }

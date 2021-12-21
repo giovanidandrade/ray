@@ -1,5 +1,5 @@
 IDIR    := include
-SDIRS   := src src/utils
+SDIRS   := src src/utils src/camera
 ODIRS   := $(foreach dir,$(SDIRS),$(subst src,obj,$(dir)))
 
 CXX     := g++
