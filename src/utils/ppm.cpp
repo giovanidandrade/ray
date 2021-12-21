@@ -16,8 +16,7 @@ PPM::dump() const
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      Color color = 255.9999 * getColor(x, y);
-      printf("%d %d %d\n", (int)color.r, (int)color.g, (int)color.b);
+      getColor(x, y).dump();
     }
   }
 }

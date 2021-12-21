@@ -1,5 +1,4 @@
 #include "ppm.h"
-#include <cstdio>
 
 int
 main()
@@ -15,7 +14,7 @@ main()
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
       float r = x * X_SCALING;
-      float g = y * Y_SCALING;
+      float g = 1.0 - y * Y_SCALING;
       float b = 0.25;
 
       canvas.setColor(x, y, Color(r, g, b));

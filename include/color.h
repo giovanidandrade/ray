@@ -10,6 +10,8 @@ public:
   Color operator*(const float s) const;
 
   float r, g, b;
+
+  void dump() const;
 };
 
 Color

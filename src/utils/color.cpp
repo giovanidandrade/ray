@@ -1,4 +1,5 @@
 #include "color.h"
+#include <cstdio>
 
 Color::Color(float r, float g, float b)
 {
@@ -24,4 +25,13 @@ Color
 operator*(const float s, const Color& color)
 {
   return Color(s * color.r, s * color.g, s * color.b);
+}
+
+void
+Color::dump() const
+{
+  printf("%d %d %d\n",
+         static_cast<int>(255.999 * r),
+         static_cast<int>(255.999 * g),
+         static_cast<int>(255.999 * b));
 }
