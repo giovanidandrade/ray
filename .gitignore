@@ -1,3 +1,9 @@
 # Object files and executables
 obj/*
 ray
+
+# Artifacts
+*.ppm
+
+# Debug info
+*.log

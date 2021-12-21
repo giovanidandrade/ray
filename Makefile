@@ -1,16 +1,16 @@
 IDIR    := include
-ODIR    := obj
-SDIR    := src
+SDIRS   := src src/utils
+ODIRS   := $(foreach dir,$(SDIRS),$(subst src,obj,$(dir)))
 
 CXX     := g++
 CFLAGS  := -Wall -std=c++17 -I$(IDIR)
 
 DEPS    := $(wildcard $(IDIR)/*.h)
 
-SRCS    := $(wildcard $(SDIR)/*.cpp)
-OBJS    := $(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(SRCS))
+SRCS    := $(foreach dir,$(SDIRS),$(wildcard $(dir)/*.cpp))
+OBJS    := $(patsubst src/%.cpp,obj/%.o,$(SRCS))
 
-$(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
+obj/%.o: src/%.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 ray: $(OBJS)
@@ -21,5 +21,5 @@ ray: $(OBJS)
 clean:
 	rm -f $(OBJS) ray
 
-folders: $(ODIR)
-	mkdir $(ODIR)
+folders:
+	mkdir -p $(ODIRS)
