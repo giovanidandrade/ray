@@ -87,7 +87,7 @@ operator/(float t, const Vec& v)
 }
 
 float
-Vec::len_squared() const
+Vec::lenSquared() const
 {
   return x * x + y * y + z * z;
 }
@@ -95,7 +95,7 @@ Vec::len_squared() const
 float
 Vec::len() const
 {
-  return sqrt(len_squared());
+  return sqrt(lenSquared());
 }
 
 Vec

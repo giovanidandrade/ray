@@ -22,7 +22,7 @@ public:
   Vec operator/(float t) const;
 
   float len() const;
-  float len_squared() const;
+  float lenSquared() const;
 
   Vec normalize() const;
   float dot(const Vec& v) const;

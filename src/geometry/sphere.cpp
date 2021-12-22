@@ -18,9 +18,9 @@ Sphere::hit(const Ray& ray, float tMin, float tMax) const
 {
   Vec oc = ray.origin - center;
 
-  float a = ray.direction.len_squared();
+  float a = ray.direction.lenSquared();
   float halfB = ray.direction.dot(oc);
-  float c = oc.len_squared() - radius * radius;
+  float c = oc.lenSquared() - radius * radius;
 
   float delta = halfB * halfB - a * c;
   if (delta < 0) {

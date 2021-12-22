@@ -6,14 +6,14 @@
 int
 main()
 {
-  float aspect_ratio = 16.0 / 9.0;
+  float aspectRatio = 16.0 / 9.0;
 
   int width = 400;
-  int height = static_cast<int>(width / aspect_ratio);
+  int height = static_cast<int>(width / aspectRatio);
 
-  float viewport_height = 2.0;
-  float focal_length = 1.0;
-  Camera camera(viewport_height, aspect_ratio, focal_length);
+  float viewportHeight = 2.0;
+  float focalLength = 1.0;
+  Camera camera(viewportHeight, aspectRatio, focalLength);
 
   float X_SCALING = 1.0 / (width - 1);
   float Y_SCALING = 1.0 / (height - 1);

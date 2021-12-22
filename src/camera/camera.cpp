@@ -1,19 +1,18 @@
 #include "camera.h"
 
-Camera::Camera(float viewport_height, float aspect_ratio, float focal_length)
+Camera::Camera(float viewportHeight, float aspectRatio, float focalLength)
 {
-  float viewport_width = aspect_ratio * viewport_height;
+  float viewportWidth = aspectRatio * viewportHeight;
 
   this->origin = Point(0, 0, 0);
-  this->horizontal = Vec(viewport_width, 0, 0);
-  this->vertical = Vec(0, viewport_height, 0);
-  this->lower_left_corner =
-    origin - horizontal / 2.0 - vertical / 2.0 - Vec(0, 0, focal_length);
+  this->horizontal = Vec(viewportWidth, 0, 0);
+  this->vertical = Vec(0, viewportHeight, 0);
+  this->lowerLeftCorner =
+    origin - horizontal / 2.0 - vertical / 2.0 - Vec(0, 0, focalLength);
 }
 
 Ray
 Camera::cast(float u, float v) const
 {
-  return Ray(origin,
-             lower_left_corner + u * horizontal + v * vertical - origin);
+  return Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
 }

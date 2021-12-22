@@ -19,7 +19,7 @@ ray: $(OBJS)
 .PHONY: clean folders
 
 clean:
-	rm -f $(OBJS) ray
+	rm -f $(OBJS) ray *.ppm *.log
 
 folders:
 	mkdir -p $(ODIRS)
