@@ -7,3 +7,6 @@ ray
 
 # Debug info
 *.log
+
+# IDE stuff
+.vscode

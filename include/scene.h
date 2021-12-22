@@ -3,8 +3,12 @@
 
 #include "color.h"
 #include "ray.h"
+#include "world.h"
+
+World
+makeWorld();
 
 Color
-getColor(const Ray&);
+getColor(const Ray& ray, const World& world);
 
 #endif

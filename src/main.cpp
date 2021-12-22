@@ -19,6 +19,7 @@ main()
   float Y_SCALING = 1.0 / (height - 1);
 
   PPM canvas(width, height);
+  World world = makeWorld();
 
   for (int y = 0; y < height; ++y) {
     fprintf(stderr, "Scanlines done: %d\n", y);
@@ -27,7 +28,7 @@ main()
       float v = 1 - y * Y_SCALING;
 
       Ray ray = camera.cast(u, v);
-      Color color = getColor(ray);
+      Color color = getColor(ray, world);
 
       canvas.setColor(x, y, color);
     }

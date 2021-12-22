@@ -1,6 +1,8 @@
 #ifndef VEC_H
 #define VEC_H
 
+#include "color.h"
+
 class Vec
 {
 public:
@@ -25,6 +27,9 @@ public:
   Vec normalize() const;
   float dot(const Vec& v) const;
   Vec cross(const Vec& v) const;
+
+  // Useful for testing / Normal materials
+  Color toColor() const;
 };
 
 Vec

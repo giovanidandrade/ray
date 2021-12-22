@@ -4,7 +4,7 @@ Camera::Camera(float viewport_height, float aspect_ratio, float focal_length)
 {
   float viewport_width = aspect_ratio * viewport_height;
 
-  this->origin = Point();
+  this->origin = Point(0, 0, 0);
   this->horizontal = Vec(viewport_width, 0, 0);
   this->vertical = Vec(0, viewport_height, 0);
   this->lower_left_corner =

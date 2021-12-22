@@ -115,3 +115,9 @@ Vec::cross(const Vec& v) const
 {
   return Vec(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 }
+
+Color
+Vec::toColor() const
+{
+  return Color(x, y, z);
+}
