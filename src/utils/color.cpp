@@ -36,8 +36,20 @@ Color::operator+(const Color& c) const
 void
 Color::dump() const
 {
+  Color color = this->clamp();
+
   printf("%d %d %d\n",
-         static_cast<int>(255.999 * r),
-         static_cast<int>(255.999 * g),
-         static_cast<int>(255.999 * b));
+         static_cast<int>(256 * color.r),
+         static_cast<int>(256 * color.g),
+         static_cast<int>(256 * color.b));
+}
+
+Color
+Color::clamp() const
+{
+  float newR = r < 0 ? 0 : r > 1 ? 1 : r;
+  float newG = g < 0 ? 0 : g > 1 ? 1 : g;
+  float newB = b < 0 ? 0 : b > 1 ? 1 : b;
+
+  return Color(newR, newG, newB);
 }

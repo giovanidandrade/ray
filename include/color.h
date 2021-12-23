@@ -13,6 +13,9 @@ public:
   float r, g, b;
 
   void dump() const;
+
+private:
+  Color clamp() const;
 };
 
 Color
