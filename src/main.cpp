@@ -2,7 +2,6 @@
 #include "ppm.h"
 #include "rand.h"
 #include "scene.h"
-#include <cstdio>
 #include <thread>
 
 int
@@ -49,8 +48,8 @@ main()
       // a predetermined slice that doesn't overlap with the others
       std::ref(canvas),
       // Sharing the world and the camera is OK since they're read only
-      std::ref(world),
-      std::ref(camera),
+      std::cref(world),
+      std::cref(camera),
       scanner);
 
     y0 += step + rem;
@@ -64,7 +63,6 @@ main()
     threads[i].join();
   }
 
-  fprintf(stderr, "Scanning done. Printing.\n");
   canvas.dump();
   return 0;
 }
