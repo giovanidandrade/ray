@@ -18,7 +18,14 @@ main()
   Camera camera(viewportHeight, aspectRatio, focalLength);
 
   int pixelSamples = 100;
-  int numThreads = 3;
+
+  // We're leaving one thread open so we can use the computer
+  // while the render is going.
+  //
+  // If we have no idea about the number of threads the computer
+  // can support, let's be conservative and go single threaded.
+  int processorCount = std::thread::hardware_concurrency();
+  int numThreads = processorCount == 0 ? 1 : processorCount - 1;
 
   PPM canvas(width, height);
   World world = makeWorld();
