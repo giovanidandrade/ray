@@ -16,6 +16,7 @@ public:
 
 private:
   Color clamp() const;
+  Color gamma2() const;
 };
 
 Color

@@ -1,4 +1,5 @@
 #include "color.h"
+#include <cmath>
 #include <cstdio>
 
 Color::Color(float r, float g, float b)
@@ -36,7 +37,7 @@ Color::operator+(const Color& c) const
 void
 Color::dump() const
 {
-  Color color = this->clamp();
+  Color color = this->clamp().gamma2();
 
   printf("%d %d %d\n",
          static_cast<int>(256 * color.r),
@@ -52,4 +53,10 @@ Color::clamp() const
   float newB = b < 0 ? 0 : b > 1 ? 1 : b;
 
   return Color(newR, newG, newB);
+}
+
+Color
+Color::gamma2() const
+{
+  return Color(sqrt(r), sqrt(g), sqrt(b));
 }
