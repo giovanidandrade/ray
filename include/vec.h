@@ -28,6 +28,8 @@ public:
   float dot(const Vec& v) const;
   Vec cross(const Vec& v) const;
 
+  bool isNearZero() const;
+
   // Useful for testing / Normal materials
   Color toColor() const;
 };

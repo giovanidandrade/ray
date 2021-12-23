@@ -29,9 +29,15 @@ operator*(const float s, const Color& color)
 }
 
 Color
+Color::operator*(const Color& c) const
+{
+  return Color(c.r * r, c.g * g, c.b * b);
+}
+
+Color
 Color::operator+(const Color& c) const
 {
-  return Color(r + c.r, g + c.g, b + c.b);
+  return Color(c.r + r, c.g + g, c.b + b);
 }
 
 void

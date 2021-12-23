@@ -20,9 +20,6 @@ struct Scanner
 World
 makeWorld();
 
-Color
-getColor(const Ray& ray, const World& world);
-
 void
 scan(PPM& canvas, const World& world, const Camera& camera, Scanner scanner);
 

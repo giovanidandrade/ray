@@ -1,16 +1,13 @@
 #include "sphere.h"
 #include <cmath>
 
-Sphere::Sphere()
-{
-  this->center = Point();
-  this->radius = 1.0;
-}
-
-Sphere::Sphere(const Point& center, float radius)
+Sphere::Sphere(const Point& center,
+               float radius,
+               std::shared_ptr<Material> material)
 {
   this->center = center;
   this->radius = radius;
+  this->material = material;
 }
 
 std::optional<Observation>
@@ -45,6 +42,7 @@ Sphere::hit(const Ray& ray, float tMin, float tMax) const
   Observation obs;
   obs.t = root;
   obs.point = ray.at(root);
+  obs.material = material;
 
   Vec outwardNormal = (obs.point - center) / radius;
   obs.setFace(ray, outwardNormal);

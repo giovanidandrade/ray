@@ -1,8 +1,10 @@
 #ifndef OBSERVABLE_H
 #define OBSERVABLE_H
 
+#include "material.h"
 #include "point.h"
 #include "ray.h"
+#include <memory>
 #include <optional>
 
 struct Observation
@@ -11,6 +13,7 @@ struct Observation
   Vec normal;
   float t;
   bool frontFacing;
+  std::shared_ptr<Material> material;
 
   inline void setFace(const Ray& ray, const Vec& outwardNormal)
   {

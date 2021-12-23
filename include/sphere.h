@@ -6,8 +6,7 @@
 class Sphere : public Observable
 {
 public:
-  Sphere();
-  Sphere(const Point& center, float radius);
+  Sphere(const Point& center, float radius, std::shared_ptr<Material> material);
 
   virtual std::optional<Observation> hit(const Ray& ray,
                                          float tMin,
@@ -16,6 +15,7 @@ public:
 private:
   Point center;
   float radius;
+  std::shared_ptr<Material> material;
 };
 
 #endif

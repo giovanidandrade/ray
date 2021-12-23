@@ -9,6 +9,7 @@ public:
 
   Color operator*(const float s) const;
   Color operator+(const Color& c) const;
+  Color operator*(const Color& c) const;
 
   float r, g, b;
 

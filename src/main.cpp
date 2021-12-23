@@ -35,6 +35,14 @@ main()
   int step = height / numThreads;
   int rem = height % numThreads;
   for (int i = 0; i < numThreads; ++i) {
+    // Not the best division, scanlines that have a lot of geometry
+    // (such as the last few ones that have the floor and object interactions)
+    // will do more work.
+    //
+    // A fairer division would be having scanrows, but that
+    // would be trickier.
+    //
+    // Something to keep in mind for the future.
     Scanner scanner = { .id = i,
                         .width = width,
                         .height = height,

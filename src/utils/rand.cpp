@@ -12,7 +12,31 @@ randomFloat()
 }
 
 float
+randomFloat(float min, float max)
+{
+  return randomFloat() * (max - min) + min;
+}
+
+float
 jitter(float f)
 {
   return f + randomFloat();
+}
+
+Vec
+randomVec(float min, float max)
+{
+  return Vec(
+    randomFloat(min, max), randomFloat(min, max), randomFloat(min, max));
+}
+
+Vec
+randomUnitVector()
+{
+  while (true) {
+    Vec v = randomVec(-1, 1);
+    if (v.lenSquared() < 1) {
+      return v.normalize();
+    }
+  }
 }

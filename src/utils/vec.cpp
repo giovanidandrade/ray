@@ -121,3 +121,10 @@ Vec::toColor() const
 {
   return Color(x, y, z);
 }
+
+bool
+Vec::isNearZero() const
+{
+  float tol = 1e-6;
+  return fabs(x) < tol && fabs(y) < tol && fabs(z) < tol;
+}
