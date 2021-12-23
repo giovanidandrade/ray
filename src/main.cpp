@@ -3,6 +3,7 @@
 #include "rand.h"
 #include "scene.h"
 #include <cstdio>
+#include <thread>
 
 int
 main()
@@ -17,29 +18,43 @@ main()
   Camera camera(viewportHeight, aspectRatio, focalLength);
 
   int pixelSamples = 100;
-  float PIXEL_SCALING = 1.0 / pixelSamples;
-
-  float X_SCALING = 1.0 / (width - 1);
-  float Y_SCALING = 1.0 / (height - 1);
+  int numThreads = 3;
 
   PPM canvas(width, height);
   World world = makeWorld();
 
-  for (int y = 0; y < height; ++y) {
-    fprintf(stderr, "Scanlines done: %d\n", y);
-    for (int x = 0; x < width; ++x) {
-      Color color = Color(0, 0, 0);
+  std::vector<std::thread> threads(numThreads);
 
-      for (int s = 0; s < pixelSamples; ++s) {
-        float u = jitter(x) * X_SCALING;
-        float v = 1 - jitter(y) * Y_SCALING;
+  int y0 = 0;
+  int step = height / numThreads;
+  int rem = height % numThreads;
+  for (int i = 0; i < numThreads; ++i) {
+    Scanner scanner = { .id = i,
+                        .width = width,
+                        .height = height,
+                        .y0 = y0,
+                        .y1 = y0 + step + rem,
+                        .pixelSamples = pixelSamples };
 
-        Ray ray = camera.cast(u, v);
-        color = color + getColor(ray, world);
-      }
+    threads[i] = std::thread(
+      scan,
+      // We're sharing memory, but this is safe because each thread has
+      // a predetermined slice that doesn't overlap with the others
+      std::ref(canvas),
+      // Sharing the world and the camera is OK since they're read only
+      std::ref(world),
+      std::ref(camera),
+      scanner);
 
-      canvas.setColor(x, y, color * PIXEL_SCALING);
-    }
+    y0 += step + rem;
+    // We're arbitrarily giving the first thread more work
+    // so as far as the other threads are aware,
+    // there is no remainder
+    rem = 0;
+  }
+
+  for (int i = 0; i < numThreads; ++i) {
+    threads[i].join();
   }
 
   fprintf(stderr, "Scanning done. Printing.\n");

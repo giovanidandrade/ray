@@ -3,7 +3,7 @@ SDIRS   := src src/utils src/camera src/geometry
 ODIRS   := $(foreach dir,$(SDIRS),$(subst src,obj,$(dir)))
 
 CXX     := g++
-CFLAGS  := -Wall -std=c++17 -I$(IDIR) -O2
+CFLAGS  := -Wall -std=c++17 -I$(IDIR) -pthread -O2
 
 DEPS    := $(wildcard $(IDIR)/*.h)
 
