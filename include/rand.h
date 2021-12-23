@@ -12,4 +12,7 @@ jitter(float f);
 Vec
 randomUnitVector();
 
+Vec
+randomInUnitSphere();
+
 #endif

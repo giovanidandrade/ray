@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "lambertian.h"
+#include "metal.h"
 #include "rand.h"
 #include "sphere.h"
 #include "vec.h"
@@ -14,13 +15,17 @@ const Color BLACK = Color(0, 0, 0);
 World
 makeWorld()
 {
-  WorldList objects = WorldList(2);
+  WorldList objects = WorldList(4);
 
-  auto ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.8));
+  auto ground = make_shared<Lambertian>(Color(0.8, 0.8, 0));
   auto sphere = make_shared<Lambertian>(Color(0.7, 0.3, 0.3));
+  auto steel = make_shared<Metal>(Color(0.8, 0.8, 0.8), 0.3);
+  auto gold = make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
 
   objects[0] = make_shared<Sphere>(Point(0, 0, -1), 0.5, sphere);
   objects[1] = make_shared<Sphere>(Point(0, -100.5, -1), 100, ground);
+  objects[2] = make_shared<Sphere>(Point(-1, 0, -1), 0.5, steel);
+  objects[3] = make_shared<Sphere>(Point(1, 0, -1), 0.5, gold);
 
   return World(objects);
 }

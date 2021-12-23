@@ -33,10 +33,16 @@ randomVec(float min, float max)
 Vec
 randomUnitVector()
 {
+  return randomInUnitSphere().normalize();
+}
+
+Vec
+randomInUnitSphere()
+{
   while (true) {
     Vec v = randomVec(-1, 1);
     if (v.lenSquared() < 1) {
-      return v.normalize();
+      return v;
     }
   }
 }
