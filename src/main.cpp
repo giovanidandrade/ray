@@ -15,22 +15,10 @@ main()
 
   int pixelSamples = 100;
 
-  Point lookFrom = Point(3, 3, 2);
-  Point lookAt = Point(0, 0, -1);
-  Vec viewUp = Vec(0, 1, 0);
-
-  float aperture = 2;
-  float distToFocus = (lookFrom - lookAt).len();
-
-  Camera camera(
-    lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
-
-  ThreadingInfo info = {
-    .width = width,
-    .height = height,
-    .pixelSamples = pixelSamples,
-    .camera = camera,
-  };
+  ThreadingInfo info = { .width = width,
+                         .height = height,
+                         .pixelSamples = pixelSamples,
+                         .aspectRatio = aspectRatio };
   launchThreads(info, canvas);
 
   canvas.dump();

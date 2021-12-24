@@ -33,6 +33,22 @@ makeWorld()
   return World(objects);
 }
 
+Camera
+makeCamera(float aspectRatio)
+{
+  Point lookFrom = Point(3, 3, 2);
+  Point lookAt = Point(0, 0, -1);
+  Vec viewUp = Vec(0, 1, 0);
+
+  float aperture = 2;
+  float distToFocus = (lookFrom - lookAt).len();
+
+  Camera camera(
+    lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
+
+  return camera;
+}
+
 Color
 getColor(const Ray& ray, const World& world, int depth)
 {

@@ -24,6 +24,7 @@ launchThreads(const ThreadingInfo& info, PPM& canvas)
   int height = info.height;
 
   World world = makeWorld();
+  Camera camera = makeCamera(info.aspectRatio);
 
   int numThreads = getNumThreads();
   std::vector<std::thread> threads(numThreads);
@@ -47,7 +48,7 @@ launchThreads(const ThreadingInfo& info, PPM& canvas)
       std::ref(canvas),
       // Sharing the world and the camera is OK since they're read only
       std::cref(world),
-      std::cref(info.camera),
+      std::cref(camera),
       scanner);
 
     // We're arbitrarily giving the first thread more work

@@ -10,7 +10,7 @@ struct ThreadingInfo
   int height;
   int pixelSamples;
 
-  Camera camera;
+  float aspectRatio;
 };
 
 // Changes canvas

@@ -20,6 +20,9 @@ struct Scanner
 World
 makeWorld();
 
+Camera
+makeCamera(float aspectRatio);
+
 void
 scan(PPM& canvas, const World& world, const Camera& camera, Scanner scanner);
 
