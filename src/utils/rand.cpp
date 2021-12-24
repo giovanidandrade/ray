@@ -5,8 +5,10 @@
 float
 randomFloat()
 {
-  // This should be thread safe
-  static thread_local std::mt19937 generator;
+  // This should be thread safe, althought it does leak 2.5 KiB per thread.
+  // This should be acceptable, but if it isn't, you'll need to roll your
+  // own thread safe randomness.
+  static thread_local std::mt19937_64 generator;
   std::uniform_real_distribution<float> distribution(0.0, 1.0);
   return distribution(generator);
 }
