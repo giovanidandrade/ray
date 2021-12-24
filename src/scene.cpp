@@ -14,6 +14,22 @@ using std::make_shared;
 const float infinity = std::numeric_limits<float>::infinity();
 const Color BLACK = Color(0, 0, 0);
 
+Camera
+makeCamera(float aspectRatio)
+{
+  Point lookFrom = Point(3, 3, 2);
+  Point lookAt = Point(0, 0, -1);
+  Vec viewUp = Vec(0, 1, 0);
+
+  float aperture = 2;
+  float distToFocus = (lookFrom - lookAt).len();
+
+  Camera camera(
+    lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
+
+  return camera;
+}
+
 World
 makeWorld()
 {
@@ -33,20 +49,29 @@ makeWorld()
   return World(objects);
 }
 
-Camera
-makeCamera(float aspectRatio)
+SceneInfo
+makeSceneInfo()
 {
-  Point lookFrom = Point(3, 3, 2);
-  Point lookAt = Point(0, 0, -1);
-  Vec viewUp = Vec(0, 1, 0);
+  float aspectRatio = 16.0 / 9.0;
 
-  float aperture = 2;
-  float distToFocus = (lookFrom - lookAt).len();
+  int width = 400;
+  int height = static_cast<int>(width / aspectRatio);
 
-  Camera camera(
-    lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
+  int pixelSamples = 100;
+  World world = makeWorld();
+  Camera camera = makeCamera(aspectRatio);
 
-  return camera;
+  PPM canvas(width, height);
+
+  SceneInfo info = { .width = width,
+                     .height = height,
+                     .pixelSamples = pixelSamples,
+                     .aspectRatio = aspectRatio,
+                     .world = world,
+                     .camera = camera,
+                     .canvas = canvas };
+
+  return info;
 }
 
 Color

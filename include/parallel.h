@@ -1,20 +1,10 @@
 #ifndef PARALLEL_H
 #define PARALLEL_H
 
-#include "camera.h"
-#include "ppm.h"
-
-struct ThreadingInfo
-{
-  int width;
-  int height;
-  int pixelSamples;
-
-  float aspectRatio;
-};
+#include "scene.h"
 
 // Changes canvas
 void
-launchThreads(const ThreadingInfo& info, PPM& canvas);
+launchThreads(SceneInfo& info);
 
 #endif

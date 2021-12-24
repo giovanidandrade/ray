@@ -18,13 +18,10 @@ getNumThreads()
 }
 
 void
-launchThreads(const ThreadingInfo& info, PPM& canvas)
+launchThreads(SceneInfo& info)
 {
   int width = info.width;
   int height = info.height;
-
-  World world = makeWorld();
-  Camera camera = makeCamera(info.aspectRatio);
 
   int numThreads = getNumThreads();
   std::vector<std::thread> threads(numThreads);
@@ -45,10 +42,10 @@ launchThreads(const ThreadingInfo& info, PPM& canvas)
       scan,
       // We're sharing memory, but this is safe because each thread has
       // a predetermined slice that doesn't overlap with the others
-      std::ref(canvas),
+      std::ref(info.canvas),
       // Sharing the world and the camera is OK since they're read only
-      std::cref(world),
-      std::cref(camera),
+      std::cref(info.world),
+      std::cref(info.camera),
       scanner);
 
     // We're arbitrarily giving the first thread more work

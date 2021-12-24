@@ -17,6 +17,22 @@ struct Scanner
   int pixelSamples;
 };
 
+struct SceneInfo
+{
+  int width;
+  int height;
+  int pixelSamples;
+
+  float aspectRatio;
+  World world;
+  Camera camera;
+
+  PPM canvas;
+};
+
+SceneInfo
+makeSceneInfo();
+
 World
 makeWorld();
 
