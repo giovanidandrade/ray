@@ -8,6 +8,8 @@ public:
   Color();
 
   Color operator*(const float s) const;
+  Color operator+(const float s) const;
+
   Color operator+(const Color& c) const;
   Color operator*(const Color& c) const;
 
@@ -22,5 +24,8 @@ private:
 
 Color
 operator*(const float s, const Color& color);
+
+Color
+operator+(const float s, const Color& color);
 
 #endif

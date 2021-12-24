@@ -7,6 +7,9 @@ float
 randomFloat();
 
 float
+randomFloat(float min, float max);
+
+float
 jitter(float f);
 
 Vec
@@ -17,5 +20,8 @@ randomInUnitSphere();
 
 Vec
 randomInUnitDisk();
+
+Color
+randomColor();
 
 #endif

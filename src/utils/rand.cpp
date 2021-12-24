@@ -61,3 +61,9 @@ randomInUnitDisk()
     }
   }
 }
+
+Color
+randomColor()
+{
+  return Color(randomFloat(), randomFloat(), randomFloat());
+}

@@ -17,12 +17,12 @@ const Color BLACK = Color(0, 0, 0);
 Camera
 makeCamera(float aspectRatio)
 {
-  Point lookFrom = Point(3, 3, 2);
-  Point lookAt = Point(0, 0, -1);
+  Point lookFrom = Point(13, 2, 3);
+  Point lookAt = Point(0, 0, 0);
   Vec viewUp = Vec(0, 1, 0);
 
-  float aperture = 2;
-  float distToFocus = (lookFrom - lookAt).len();
+  float aperture = 0.1;
+  float distToFocus = 10;
 
   Camera camera(
     lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
@@ -33,31 +33,65 @@ makeCamera(float aspectRatio)
 World
 makeWorld()
 {
-  WorldList objects = WorldList(5);
+  World world;
 
-  auto ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-  auto blue = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
+  auto ground = make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
   auto glass = make_shared<Dielectric>(1.5);
-  auto gold = make_shared<Metal>(Color(0.8, 0.6, 0.2));
 
-  objects[0] = make_shared<Sphere>(Point(0, -100.5, -1), 100, ground);
-  objects[1] = make_shared<Sphere>(Point(0, 0, -1), 0.5, blue);
-  objects[2] = make_shared<Sphere>(Point(-1, 0, -1), 0.5, glass);
-  objects[3] = make_shared<Sphere>(Point(-1, 0, -1), -0.45, glass);
-  objects[4] = make_shared<Sphere>(Point(1, 0, -1), 0.5, gold);
+  world.addObject(make_shared<Sphere>(Point(0, -1000, 0), 1000, ground));
 
-  return World(objects);
+  for (int x = -11; x < 11; ++x) {
+    for (int z = -11; z < 11; ++z) {
+      float materialRandom = randomFloat();
+
+      Point center =
+        Point(x + 0.9 * randomFloat(), 0.2, z + 0.9 * randomFloat());
+
+      float distance = (center - Point(4, 0.2, 0)).lenSquared();
+      if (distance > 0.9) {
+        Rc<Material> material;
+
+        if (materialRandom < 0.8) {
+          // Lambertian
+          Color albedo = randomColor() * randomColor();
+          material = make_shared<Lambertian>(albedo);
+          world.addObject(make_shared<Sphere>(center, 0.2, material));
+        } else if (materialRandom < 0.95) {
+          // Metal
+          Color color = randomColor() * 0.5 + 0.5;
+          float fuzz = randomFloat(0, 0.5);
+
+          material = make_shared<Metal>(color, fuzz);
+          world.addObject(make_shared<Sphere>(center, 0.2, material));
+        } else {
+          // Glass
+          world.addObject(make_shared<Sphere>(center, 0.2, glass));
+        }
+      }
+    }
+  }
+
+  // And now the big boys
+  world.addObject(make_shared<Sphere>(Point(0, 1, 0), 1, glass));
+
+  auto diffuse = make_shared<Lambertian>(Color(0.4, 0.2, 0.1));
+  world.addObject(make_shared<Sphere>(Point(-4, 1, 0), 1, diffuse));
+
+  auto metal = make_shared<Metal>(Color(0.7, 0.6, 0.5));
+  world.addObject(make_shared<Sphere>(Point(4, 1, 0), 1, metal));
+
+  return world;
 }
 
 SceneInfo
 makeSceneInfo()
 {
-  float aspectRatio = 16.0 / 9.0;
+  float aspectRatio = 3.0 / 2.0;
 
-  int width = 400;
+  int width = 1200;
   int height = static_cast<int>(width / aspectRatio);
 
-  int pixelSamples = 100;
+  int pixelSamples = 500;
   World world = makeWorld();
   Camera camera = makeCamera(aspectRatio);
 
