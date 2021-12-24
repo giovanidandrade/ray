@@ -49,3 +49,12 @@ Sphere::hit(const Ray& ray, float tMin, float tMax) const
 
   return obs;
 }
+
+std::optional<AxisBox>
+Sphere::boundingBox() const
+{
+  AxisBox box = AxisBox(center - Vec(radius, radius, radius),
+                        center + Vec(radius, radius, radius));
+
+  return box;
+}

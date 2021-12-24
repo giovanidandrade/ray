@@ -32,6 +32,8 @@ public:
 
   // Useful for testing / Normal materials
   Color toColor() const;
+
+  float operator[](int idx) const;
 };
 
 Vec

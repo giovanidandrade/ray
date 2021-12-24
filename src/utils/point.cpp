@@ -1,4 +1,5 @@
 #include "point.h"
+#include <cstdlib>
 
 Point::Point()
 {
@@ -36,4 +37,19 @@ Vec
 Point::operator-(const Point& p) const
 {
   return Vec(x - p.x, y - p.y, z - p.z);
+}
+
+float
+Point::operator[](int idx) const
+{
+  switch (idx) {
+    case 0:
+      return x;
+    case 1:
+      return y;
+    case 2:
+      return z;
+  }
+
+  exit(1);
 }

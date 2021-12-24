@@ -24,4 +24,6 @@ randomInUnitDisk();
 Color
 randomColor();
 
+int randomInt(int min, int max);
+
 #endif

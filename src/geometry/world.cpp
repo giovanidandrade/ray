@@ -38,3 +38,23 @@ World::hit(const Ray& ray, float tMin, float tMax) const
     return {};
   }
 }
+
+std::optional<AxisBox>
+World::boundingBox() const
+{
+  if (objects.empty()) {
+    return {};
+  }
+
+  AxisBox outputBox;
+  bool isFirstBox = true;
+
+  for (const auto& object : objects) {
+    if (auto tempBox = object->boundingBox()) {
+      outputBox = isFirstBox ? *tempBox : surroundingBox(outputBox, *tempBox);
+      isFirstBox = false;
+    }
+  }
+
+  return outputBox;
+}

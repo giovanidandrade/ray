@@ -67,3 +67,9 @@ randomColor()
 {
   return Color(randomFloat(), randomFloat(), randomFloat());
 }
+
+int
+randomInt(int min, int max)
+{
+  return static_cast<int>(randomFloat(min, max + 1));
+}

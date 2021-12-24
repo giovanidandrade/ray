@@ -1,12 +1,19 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef BVH_H
+#define BVH_H
 
 #include "observable.h"
+#include "world.h"
 
-class Sphere : public Observable
+class BVH : public Observable
 {
 public:
-  Sphere(const Point& center, float radius, std::shared_ptr<Material> material);
+  BVH();
+
+  BVH(const World& world)
+    : BVH(world.objects, 0, world.objects.size())
+  {}
+
+  BVH(const WorldList& objects, int start, int end);
 
   virtual std::optional<Observation> hit(const Ray& ray,
                                          float tMin,
@@ -15,9 +22,9 @@ public:
   virtual std::optional<AxisBox> boundingBox() const override;
 
 private:
-  Point center;
-  float radius;
-  std::shared_ptr<Material> material;
+  Rc<Observable> left;
+  Rc<Observable> right;
+  AxisBox box;
 };
 
 #endif

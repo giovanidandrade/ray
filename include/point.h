@@ -17,6 +17,8 @@ public:
   Point operator-(const Vec& v) const;
 
   Vec operator-(const Point& p) const;
+
+  float operator[](int idx) const;
 };
 
 #endif

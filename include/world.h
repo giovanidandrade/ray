@@ -16,13 +16,15 @@ public:
   World();
   World(WorldList& objects);
 
+  WorldList objects;
+
   void addObject(Rc<Observable> object);
+
   virtual std::optional<Observation> hit(const Ray& ray,
                                          float tMin,
                                          float tMax) const override;
 
-private:
-  WorldList objects;
+  virtual std::optional<AxisBox> boundingBox() const override;
 };
 
 #endif

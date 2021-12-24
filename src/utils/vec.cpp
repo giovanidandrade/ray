@@ -1,5 +1,6 @@
 #include "vec.h"
 #include <cmath>
+#include <cstdlib>
 
 Vec::Vec()
 {
@@ -127,4 +128,19 @@ Vec::isNearZero() const
 {
   float tol = 1e-6;
   return fabs(x) < tol && fabs(y) < tol && fabs(z) < tol;
+}
+
+float
+Vec::operator[](int idx) const
+{
+  switch (idx) {
+    case 0:
+      return x;
+    case 1:
+      return y;
+    case 2:
+      return z;
+  }
+
+  exit(1);
 }

@@ -1,11 +1,11 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include "bvh.h"
 #include "camera.h"
 #include "color.h"
 #include "ppm.h"
 #include "ray.h"
-#include "world.h"
 
 struct Scanner
 {
@@ -24,7 +24,7 @@ struct SceneInfo
   int pixelSamples;
 
   float aspectRatio;
-  World world;
+  BVH world;
   Camera camera;
 
   PPM canvas;
@@ -33,13 +33,7 @@ struct SceneInfo
 SceneInfo
 makeSceneInfo();
 
-World
-makeWorld();
-
-Camera
-makeCamera(float aspectRatio);
-
 void
-scan(PPM& canvas, const World& world, const Camera& camera, Scanner scanner);
+scan(PPM& canvas, const BVH& world, const Camera& camera, Scanner scanner);
 
 #endif

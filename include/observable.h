@@ -1,6 +1,7 @@
 #ifndef OBSERVABLE_H
 #define OBSERVABLE_H
 
+#include "axis_box.h"
 #include "material.h"
 #include "point.h"
 #include "ray.h"
@@ -28,6 +29,8 @@ public:
   virtual std::optional<Observation> hit(const Ray& ray,
                                          float tMin,
                                          float tMax) const = 0;
+
+  virtual std::optional<AxisBox> boundingBox() const = 0;
 };
 
 #endif

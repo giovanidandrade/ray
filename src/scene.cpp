@@ -30,7 +30,7 @@ makeCamera(float aspectRatio)
   return camera;
 }
 
-World
+BVH
 makeWorld()
 {
   World world;
@@ -80,7 +80,7 @@ makeWorld()
   auto metal = make_shared<Metal>(Color(0.7, 0.6, 0.5));
   world.addObject(make_shared<Sphere>(Point(4, 1, 0), 1, metal));
 
-  return world;
+  return BVH(world);
 }
 
 SceneInfo
@@ -92,7 +92,7 @@ makeSceneInfo()
   int height = static_cast<int>(width / aspectRatio);
 
   int pixelSamples = 500;
-  World world = makeWorld();
+  BVH world = makeWorld();
   Camera camera = makeCamera(aspectRatio);
 
   PPM canvas(width, height);
@@ -109,7 +109,7 @@ makeSceneInfo()
 }
 
 Color
-getColor(const Ray& ray, const World& world, int depth)
+getColor(const Ray& ray, const BVH& world, int depth)
 {
   if (depth <= 0) {
     return BLACK;
@@ -133,7 +133,7 @@ getColor(const Ray& ray, const World& world, int depth)
 }
 
 void
-scan(PPM& canvas, const World& world, const Camera& camera, Scanner scanner)
+scan(PPM& canvas, const BVH& world, const Camera& camera, Scanner scanner)
 {
   int id = scanner.id;
 
