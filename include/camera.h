@@ -6,7 +6,13 @@
 class Camera
 {
 public:
-  Camera(float viewportHeight, float aspectRatio, float focalLength);
+  Camera(Point lookFrom,
+         Point lookAt,
+         Vec viewUp,
+         float fov,
+         float aspectRatio,
+         float aperture,
+         float focusDistance);
   Ray cast(float u, float v) const;
 
 private:
@@ -14,6 +20,9 @@ private:
   Point lowerLeftCorner;
   Vec horizontal;
   Vec vertical;
+
+  Vec lookVector, unitHorizontal, unitVertical;
+  float lensRadius;
 };
 
 #endif

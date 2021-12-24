@@ -15,4 +15,7 @@ randomUnitVector();
 Vec
 randomInUnitSphere();
 
+Vec
+randomInUnitDisk();
+
 #endif

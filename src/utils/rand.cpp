@@ -46,3 +46,16 @@ randomInUnitSphere()
     }
   }
 }
+
+Vec
+randomInUnitDisk()
+{
+  while (true) {
+    Vec v = randomVec(-1, 1);
+    v.z = 0;
+
+    if (v.lenSquared() < 1) {
+      return v;
+    }
+  }
+}

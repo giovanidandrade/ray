@@ -12,9 +12,15 @@ main()
   int width = 400;
   int height = static_cast<int>(width / aspectRatio);
 
-  float viewportHeight = 2.0;
-  float focalLength = 1.0;
-  Camera camera(viewportHeight, aspectRatio, focalLength);
+  Point lookFrom = Point(3, 3, 2);
+  Point lookAt = Point(0, 0, -1);
+  Vec viewUp = Vec(0, 1, 0);
+
+  float aperture = 2;
+  float distToFocus = (lookFrom - lookAt).len();
+
+  Camera camera(
+    lookFrom, lookAt, viewUp, 20.0, aspectRatio, aperture, distToFocus);
 
   int pixelSamples = 100;
 

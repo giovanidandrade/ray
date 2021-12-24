@@ -5,6 +5,7 @@
 #include "rand.h"
 #include "sphere.h"
 #include "vec.h"
+#include <cmath>
 #include <cstdio>
 #include <limits>
 
@@ -16,17 +17,18 @@ const Color BLACK = Color(0, 0, 0);
 World
 makeWorld()
 {
-  WorldList objects = WorldList(4);
+  WorldList objects = WorldList(5);
 
-  auto ground = make_shared<Lambertian>(Color(0.8, 0.8, 0));
-  auto sphere = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-  auto gold = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.3);
+  auto ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
+  auto blue = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
   auto glass = make_shared<Dielectric>(1.5);
+  auto gold = make_shared<Metal>(Color(0.8, 0.6, 0.2));
 
-  objects[0] = make_shared<Sphere>(Point(0, 0, -1), 0.5, sphere);
-  objects[1] = make_shared<Sphere>(Point(0, -100.5, -1), 100, ground);
+  objects[0] = make_shared<Sphere>(Point(0, -100.5, -1), 100, ground);
+  objects[1] = make_shared<Sphere>(Point(0, 0, -1), 0.5, blue);
   objects[2] = make_shared<Sphere>(Point(-1, 0, -1), 0.5, glass);
-  objects[3] = make_shared<Sphere>(Point(1, 0, -1), 0.5, gold);
+  objects[3] = make_shared<Sphere>(Point(-1, 0, -1), -0.45, glass);
+  objects[4] = make_shared<Sphere>(Point(1, 0, -1), 0.5, gold);
 
   return World(objects);
 }
