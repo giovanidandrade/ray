@@ -15,23 +15,6 @@ Dielectric::Dielectric(const Color& tint, float indexRefraction)
   this->indexRefraction = indexRefraction;
 }
 
-Vec
-Dielectric::refract(const Vec& ray, const Vec& normal, float etaiOverEtat) const
-{
-  float cosTheta = fmin(-ray.dot(normal), 1.0);
-
-  Vec refract_perp = etaiOverEtat * (ray + cosTheta * normal);
-  Vec refract_para = -sqrt(fabs(1.0 - refract_perp.lenSquared())) * normal;
-
-  return refract_perp + refract_para;
-}
-
-Vec
-Dielectric::reflect(const Vec& ray, const Vec& normal) const
-{
-  return ray - 2 * ray.dot(normal) * normal;
-}
-
 float
 Dielectric::reflectance(float cosine, float refraction) const
 {

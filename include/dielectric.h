@@ -16,9 +16,6 @@ private:
   Color tint;
   float indexRefraction;
 
-  Vec refract(const Vec& ray, const Vec& normal, float etaiOverEtat) const;
-  Vec reflect(const Vec& ray, const Vec& normal) const;
-
   float reflectance(float cosine, float refraction) const;
 };
 

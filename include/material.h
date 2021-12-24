@@ -17,4 +17,10 @@ public:
                                       const Observation& obs) const = 0;
 };
 
+Vec
+refract(const Vec& ray, const Vec& normal, float ratio);
+
+Vec
+reflect(const Vec& ray, const Vec& normal);
+
 #endif

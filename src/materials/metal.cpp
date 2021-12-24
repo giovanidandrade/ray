@@ -21,12 +21,6 @@ Metal::Metal(const Color& sheen, float fuzz)
   }
 }
 
-Vec
-Metal::reflect(const Vec& ray, const Vec& normal) const
-{
-  return ray - 2 * ray.dot(normal) * normal;
-}
-
 std::optional<Pair>
 Metal::scatter(const Ray& ray, const Observation& obs) const
 {

@@ -15,8 +15,6 @@ public:
 private:
   Color sheen;
   float fuzz;
-
-  Vec reflect(const Vec& ray, const Vec& normal) const;
 };
 
 #endif
