@@ -6,6 +6,7 @@
 class Metal : public Material
 {
 public:
+  Metal(const Color& sheen);
   Metal(const Color& sheen, float fuzz);
 
   virtual std::optional<Pair> scatter(const Ray& ray,

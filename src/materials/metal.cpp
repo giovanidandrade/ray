@@ -2,6 +2,13 @@
 #include "observable.h"
 #include "rand.h"
 #include <cstdio>
+
+Metal::Metal(const Color& sheen)
+{
+  this->sheen = sheen;
+  this->fuzz = 0;
+}
+
 Metal::Metal(const Color& sheen, float fuzz)
 {
   this->sheen = sheen;
