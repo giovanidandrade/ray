@@ -1,5 +1,3 @@
-use nalgebra::Vector3;
-
 use super::*;
 
 /// A wrapper type for the upper left corner of the PNG Tile
@@ -50,9 +48,28 @@ impl PngTile {
         debug_assert! { x >= x0 && y >= y0 };
 
         let index = self.index(x, y);
-        let int_color: Vector3<u8> = nalgebra::try_convert(255.999 * value).unwrap();
+        let int_color: nalgebra::Vector3<u8> = nalgebra::try_convert(255.999 * value).unwrap();
 
         self.buffer[index..index + 3].copy_from_slice(int_color.data.as_slice());
+    }
+
+    /// Glues two tiles together vertically, such that self is on top.
+    /// The offset is the minimum of both values.
+    pub fn join_vertical(self, other: Self) -> Self {
+        let new_dimensions = Dimensions(self.dimensions.0, self.dimensions.1 + other.dimensions.1);
+        let new_offset = TileCorner(
+            self.upper_left.0.min(other.upper_left.0),
+            self.upper_left.1.min(other.upper_left.1),
+        );
+
+        let mut buffer = self.buffer;
+        buffer.extend(other.buffer);
+
+        Self {
+            dimensions: new_dimensions,
+            upper_left: new_offset,
+            buffer,
+        }
     }
 
     /// Exports the tile to a png file.

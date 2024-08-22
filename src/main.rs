@@ -1,22 +1,67 @@
-use engine::{io::PngTile, Color, Dimensions, Float};
+use engine::{
+    io::{PngTile, TileCorner},
+    Color, Dimensions, Float,
+};
 
 fn main() {
-    // Image
+    let image_width = 2560;
+    let image_height = 2560;
 
-    let image_width = 256;
-    let image_height = 256;
-    let mut canvas = PngTile::new(Dimensions(image_width, image_height));
+    let num_workers = match std::thread::available_parallelism() {
+        Ok(num) => num.get(),
+        Err(_) => 1,
+    };
 
-    // Render
-    for j in 0..image_height {
-        for i in 0..image_width {
-            let r = (i as Float) / (image_width as Float);
-            let g = (j as Float) / (image_height as Float);
+    let base_work = image_height / num_workers;
+    let mut remainder = image_height % num_workers;
+    let mut y_offset = 0;
 
-            let color = Color::new(r, g, 0.0);
-            canvas.set(i, j, color);
-        }
+    let mut handles = Vec::new();
+    for id in 0..num_workers {
+        let handle = std::thread::spawn(move || {
+            let dims = Dimensions(image_width, base_work + remainder);
+            let offset = TileCorner(0, y_offset);
+
+            let mut canvas = PngTile::with_offset(dims, offset);
+
+            for j in offset.1..(offset.1 + dims.1) {
+                eprintln!("Thread {id}: {j} / {} scanlines", dims.1);
+
+                for i in offset.0..(offset.0 + dims.0) {
+                    let r = (i as Float) / (image_width as Float);
+                    let g = (j as Float) / (image_height as Float);
+
+                    let color = Color::new(r, g, 0.0);
+                    canvas.set(i, j, color);
+                }
+            }
+
+            (offset, canvas)
+        });
+
+        y_offset += base_work + remainder;
+        remainder = 0;
+
+        handles.push(handle);
     }
 
-    canvas.export("picture.png");
+    let mut canvases = Vec::new();
+    for handle in handles.into_iter() {
+        let canvas = handle.join().expect("Thread couldn't be joined.");
+        canvases.push(canvas);
+    }
+
+    canvases.sort_unstable_by(|a, b| {
+        let (TileCorner(_, ay_offset), _) = a;
+        let (TileCorner(_, by_offset), _) = b;
+
+        ay_offset.cmp(by_offset)
+    });
+
+    canvases
+        .into_iter()
+        .map(|(_, canvas)| canvas)
+        .reduce(|acc, elem| acc.join_vertical(elem))
+        .unwrap()
+        .export("picture.png");
 }
