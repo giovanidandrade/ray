@@ -1,5 +1,6 @@
 pub mod camera;
 pub mod io;
+pub mod threads;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Dimensions(pub usize, pub usize);
