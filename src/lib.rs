@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod io;
 
 #[derive(Debug, Clone, Copy)]

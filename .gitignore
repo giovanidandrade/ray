@@ -5,3 +5,6 @@
 
 # Visual artifacts
 *.png
+
+# Debugging logs
+*.log
