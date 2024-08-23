@@ -1,7 +1,6 @@
 use camera::{Camera, Ray};
 use engine::*;
-use geometry::{plane::Plane, sphere::Sphere, Geometry};
-use io::PngTile;
+use geometry::{sphere::Sphere, Geometry};
 use std::sync::Arc;
 
 fn make_world() -> World {
@@ -29,21 +28,11 @@ fn main() {
     let world = make_world();
 
     let mut handles = Vec::new();
-    for (id, (dims, offset)) in threads::determine_work(image_dims).into_iter().enumerate() {
+    for (id, (dimensions, offset)) in threads::determine_work(image_dims).into_iter().enumerate() {
         let world = world.clone();
         let handle = std::thread::spawn(move || {
-            let mut canvas = PngTile::with_offset(dims, offset);
-
-            for j in offset.1..(offset.1 + dims.1) {
-                eprintln!("Thread {id}: {j} / {} scanlines", dims.1);
-
-                for i in offset.0..(offset.0 + dims.0) {
-                    let ray = camera.cast(i as Float, j as Float);
-                    let color = ray_color(&ray, &world);
-
-                    canvas.set(i, j, color);
-                }
-            }
+            let canvas = camera
+                .render::<fn(&Ray, &World) -> Color>(id, dimensions, offset, &world, ray_color);
 
             (id, canvas)
         });

@@ -1,4 +1,5 @@
 use super::*;
+use io::PngTile;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Camera {
@@ -52,6 +53,30 @@ impl Camera {
                 - self.center;
 
         Ray::new(self.center, direction)
+    }
+
+    pub fn render<F>(
+        &self,
+        id: usize,
+        dimensions: Dimensions,
+        offset: TileCorner,
+        world: &World,
+        render_fn: impl Fn(&Ray, &World) -> Color,
+    ) -> PngTile {
+        let mut canvas = PngTile::with_offset(dimensions, offset);
+
+        for j in offset.1..(offset.1 + dimensions.1) {
+            eprintln!("Thread {id}: {j} / {} scanlines", dimensions.1);
+
+            for i in offset.0..(offset.0 + dimensions.0) {
+                let ray = self.cast(i as Float, j as Float);
+                let color = render_fn(&ray, world);
+
+                canvas.set(i, j, color);
+            }
+        }
+
+        canvas
     }
 }
 
