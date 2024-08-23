@@ -1,8 +1,36 @@
+use super::*;
+use camera::{Camera, Ray};
+use io::PngTile;
 use std::thread::JoinHandle;
 
-use super::*;
-use io::PngTile;
+/// Given a camera, a world and a render function, uses as many cores available to render the scene
+pub fn render_parallel(
+    image_dimensions: Dimensions,
+    camera: Camera,
+    world: &World,
+    render_fn: fn(&Ray, &World) -> Color,
+) -> PngTile {
+    let mut handles = Vec::new();
+    for (id, (dimensions, offset)) in threads::determine_work(image_dimensions)
+        .into_iter()
+        .enumerate()
+    {
+        let world = world.clone();
+        let handle = std::thread::spawn(move || {
+            let canvas = camera
+                .render::<fn(&Ray, &World) -> Color>(id, dimensions, offset, &world, render_fn);
 
+            (id, canvas)
+        });
+
+        handles.push(handle);
+    }
+
+    threads::join_canvases(handles)
+}
+
+/// Attempts to estimate the number of cores available for parallelism, defaulting to 1 should it not be
+/// able to estimate said value.
 pub fn estimate_cores() -> usize {
     match std::thread::available_parallelism() {
         Ok(num) => num.get(),

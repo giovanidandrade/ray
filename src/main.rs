@@ -23,22 +23,9 @@ fn ray_color(ray: &Ray, world: &World) -> Color {
 }
 
 fn main() {
-    let image_dims = Dimensions(400, 225);
-    let camera = Camera::sensible_defaults(image_dims);
+    let image_dimensions = Dimensions(400, 225);
+    let camera = Camera::sensible_defaults(image_dimensions);
     let world = make_world();
 
-    let mut handles = Vec::new();
-    for (id, (dimensions, offset)) in threads::determine_work(image_dims).into_iter().enumerate() {
-        let world = world.clone();
-        let handle = std::thread::spawn(move || {
-            let canvas = camera
-                .render::<fn(&Ray, &World) -> Color>(id, dimensions, offset, &world, ray_color);
-
-            (id, canvas)
-        });
-
-        handles.push(handle);
-    }
-
-    threads::join_canvases(handles).export("picture.png");
+    threads::render_parallel(image_dimensions, camera, &world, ray_color).export("picture.png");
 }
