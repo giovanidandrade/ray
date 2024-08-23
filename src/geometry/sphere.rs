@@ -2,8 +2,8 @@ use super::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Sphere {
-    pub center: Point,
-    pub radius: Float,
+    center: Point,
+    radius: Float,
 }
 
 impl Sphere {

@@ -1,6 +1,6 @@
 use camera::{Camera, Ray};
 use engine::*;
-use geometry::{sphere::Sphere, Geometry};
+use geometry::{plane::Plane, sphere::Sphere, Geometry};
 use io::PngTile;
 use std::sync::Arc;
 
