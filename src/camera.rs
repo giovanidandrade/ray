@@ -7,6 +7,7 @@ pub struct Camera {
     center: Point,
     pixel_delta_u: Vector,
     pixel_delta_v: Vector,
+    samples_per_pixel: usize,
 }
 
 impl Camera {
@@ -15,6 +16,7 @@ impl Camera {
         viewport_height: Float,
         dimensions: Dimensions,
         camera_center: Point,
+        samples_per_pixel: usize,
     ) -> Self {
         let Dimensions(image_width, image_height) = dimensions;
 
@@ -38,13 +40,14 @@ impl Camera {
             center: camera_center,
             pixel_delta_u,
             pixel_delta_v,
+            samples_per_pixel,
         }
     }
 
     /// Returns a Camera with the common defaults I use in my renders: unit focal length, origin center and
     /// viewport height of 2
     pub fn sensible_defaults(dimensions: Dimensions) -> Self {
-        Self::new(1.0, 2.0, dimensions, Point::zeros())
+        Self::new(1.0, 2.0, dimensions, Point::zeros(), 10)
     }
 
     pub fn cast(&self, u: Float, v: Float) -> Ray {
@@ -53,6 +56,22 @@ impl Camera {
                 - self.center;
 
         Ray::new(self.center, direction)
+    }
+
+    fn jitter_batch(&self) -> Vec<(Float, Float)> {
+        use rand::Rng;
+
+        let mut jitter = Vec::new();
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..self.samples_per_pixel {
+            let du = rng.gen::<Float>() - 0.5;
+            let dv = rng.gen::<Float>() - 0.5;
+
+            jitter.push((du, dv));
+        }
+
+        jitter
     }
 
     pub fn render<F>(
@@ -69,9 +88,14 @@ impl Camera {
             eprintln!("Thread {id}: {j} / {} scanlines", dimensions.1);
 
             for i in offset.0..(offset.0 + dimensions.0) {
-                let ray = self.cast(i as Float, j as Float);
-                let color = render_fn(&ray, world);
+                let mut color = Color::default();
 
+                for (du, dv) in self.jitter_batch().iter() {
+                    let ray = self.cast(i as Float + du, j as Float + dv);
+                    color += render_fn(&ray, world);
+                }
+
+                color /= self.samples_per_pixel as Float;
                 canvas.set(i, j, color);
             }
         }
