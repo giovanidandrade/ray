@@ -1,19 +1,20 @@
 use super::*;
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Copy)]
-pub struct LambertianAlwaysScatters {
+pub struct Lambertian {
     albedo: Color,
 }
 
-impl LambertianAlwaysScatters {
-    pub fn new(albedo: Color) -> Self {
-        Self { albedo }
+impl Lambertian {
+    pub fn new(albedo: Color) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 }
 
 const NEAR_ZERO_TOLERANCE: Float = 1e-8;
 
-impl Material for LambertianAlwaysScatters {
+impl Material for Lambertian {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
         let scatter_direction = collision.normal + random::random_vector_on_unit_sphere();
         if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
@@ -29,23 +30,23 @@ impl Material for LambertianAlwaysScatters {
 
 #[derive(Debug, Clone, Copy)]
 /// A Lambertian model of diffuse materials that scatters probabilistically
-pub struct LambertianSometimesScatter {
+pub struct LambertianProb {
     albedo: Color,
     probability: Float,
 }
 
-impl LambertianSometimesScatter {
+impl LambertianProb {
     /// Will error out if the probability is smaller than 0 or bigger than 100%
-    pub fn new(albedo: Color, probability: Float) -> Self {
+    pub fn new(albedo: Color, probability: Float) -> Arc<Self> {
         assert! { Range(0.0, 1.0).contains(probability) }
-        Self {
+        Arc::new(Self {
             albedo,
             probability,
-        }
+        })
     }
 }
 
-impl Material for LambertianSometimesScatter {
+impl Material for LambertianProb {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
         use rand::Rng;
 
@@ -72,8 +73,8 @@ pub struct LambertianApproximation {
 }
 
 impl LambertianApproximation {
-    pub fn new(albedo: Color) -> Self {
-        Self { albedo }
+    pub fn new(albedo: Color) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 }
 
