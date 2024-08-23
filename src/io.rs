@@ -1,9 +1,5 @@
 use super::*;
 
-/// A wrapper type for the upper left corner of the PNG Tile
-#[derive(Debug, Clone, Copy, Default)]
-pub struct TileCorner(pub usize, pub usize);
-
 #[derive(Debug, Clone)]
 pub struct PngTile {
     dimensions: Dimensions,

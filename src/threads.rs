@@ -1,7 +1,7 @@
 use std::thread::JoinHandle;
 
 use super::*;
-use io::{PngTile, TileCorner};
+use io::PngTile;
 
 pub fn estimate_cores() -> usize {
     match std::thread::available_parallelism() {
@@ -10,8 +10,16 @@ pub fn estimate_cores() -> usize {
     }
 }
 
+/// Divies up work vertically into roughly equal bands based on the estimated number of cores (difference of 1 at most).
+pub fn determine_work(image_dims: Dimensions) -> Vec<(Dimensions, TileCorner)> {
+    determine_work_with_cores(image_dims, estimate_cores())
+}
+
 /// Divies up work vertically into roughly equal bands based on the number of cores (difference of 1 at most).
-pub fn determine_work(image_dims: Dimensions, num_cores: usize) -> Vec<(Dimensions, TileCorner)> {
+pub fn determine_work_with_cores(
+    image_dims: Dimensions,
+    num_cores: usize,
+) -> Vec<(Dimensions, TileCorner)> {
     let base_work = image_dims.1 / num_cores;
     let mut remainder = image_dims.1 % num_cores;
     let mut y_offset = 0;
