@@ -1,9 +1,9 @@
-use std::marker::{Send, Sync};
-use std::sync::Arc;
-
 pub mod camera;
 pub mod geometry;
 pub mod io;
+pub mod material;
+pub mod random;
+pub mod scene;
 pub mod threads;
 
 // Useful Aliases
@@ -13,7 +13,7 @@ pub type Point = nalgebra::Vector3<Float>;
 pub type Vector = nalgebra::Vector3<Float>;
 pub type Color = nalgebra::Vector3<Float>;
 
-pub type World = Vec<Arc<dyn geometry::Geometry + Send + Sync>>;
+pub type World = Vec<std::sync::Arc<dyn geometry::Geometry>>;
 
 // Useful constants
 pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);
@@ -34,4 +34,12 @@ impl Range {
     pub fn contains(&self, t: Float) -> bool {
         t >= self.0 && t <= self.1
     }
+}
+
+pub fn preprocess_color(color: Color) -> [u8; 3] {
+    [
+        (255.999 * color.x.powf(1.0 / 2.2)).trunc() as u8,
+        (255.999 * color.y.powf(1.0 / 2.2)).trunc() as u8,
+        (255.999 * color.z.powf(1.0 / 2.2)).trunc() as u8,
+    ]
 }

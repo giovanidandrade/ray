@@ -1,16 +1,20 @@
 use super::*;
+use material::Material;
+use std::sync::Arc;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct Plane {
     normal: Vector,
     point: Point,
+    material: Arc<dyn Material>,
 }
 
 impl Plane {
-    pub fn new(normal: Vector, point: Point) -> Self {
+    pub fn new(normal: Vector, point: Point, material: Arc<dyn Material>) -> Self {
         Self {
             normal: normal.normalize(),
             point,
+            material,
         }
     }
 }
@@ -41,6 +45,7 @@ impl Geometry for Plane {
             point: glancing_point,
             normal,
             is_front_facing,
+            material: self.material.clone(),
         })
     }
 }

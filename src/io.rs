@@ -44,9 +44,8 @@ impl PngTile {
         debug_assert! { x >= x0 && y >= y0 };
 
         let index = self.index(x, y);
-        let int_color: nalgebra::Vector3<u8> = nalgebra::try_convert(255.999 * value).unwrap();
 
-        self.buffer[index..index + 3].copy_from_slice(int_color.data.as_slice());
+        self.buffer[index..index + 3].copy_from_slice(&preprocess_color(value));
     }
 
     /// Glues two tiles together vertically, such that self is on top.

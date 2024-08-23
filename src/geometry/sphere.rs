@@ -1,14 +1,21 @@
 use super::*;
+use material::Material;
+use std::sync::Arc;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct Sphere {
     center: Point,
     radius: Float,
+    material: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: Float) -> Self {
-        Self { center, radius }
+    pub fn new(center: Point, radius: Float, material: Arc<dyn Material>) -> Self {
+        Self {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -47,6 +54,7 @@ impl Geometry for Sphere {
             point: glancing_point,
             normal,
             is_front_facing,
+            material: self.material.clone(),
         })
     }
 }

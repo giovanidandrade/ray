@@ -1,15 +1,10 @@
 use super::*;
-use camera::{Camera, Ray};
+use camera::Camera;
 use io::PngTile;
 use std::thread::JoinHandle;
 
 /// Given a camera, a world and a render function, uses as many cores available to render the scene
-pub fn render_parallel(
-    image_dimensions: Dimensions,
-    camera: Camera,
-    world: &World,
-    render_fn: fn(&Ray, &World) -> Color,
-) -> PngTile {
+pub fn render_parallel(image_dimensions: Dimensions, camera: Camera, world: &World) -> PngTile {
     let mut handles = Vec::new();
     for (id, (dimensions, offset)) in threads::determine_work(image_dimensions)
         .into_iter()
@@ -17,8 +12,7 @@ pub fn render_parallel(
     {
         let world = world.clone();
         let handle = std::thread::spawn(move || {
-            let canvas = camera
-                .render::<fn(&Ray, &World) -> Color>(id, dimensions, offset, &world, render_fn);
+            let canvas = camera.render(id, dimensions, offset, &world);
 
             (id, canvas)
         });

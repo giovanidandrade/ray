@@ -1,4 +1,5 @@
 use super::*;
+use geometry::Geometry;
 use io::PngTile;
 
 #[derive(Debug, Clone, Copy)]
@@ -45,9 +46,9 @@ impl Camera {
     }
 
     /// Returns a Camera with the common defaults I use in my renders: unit focal length, origin center and
-    /// viewport height of 2 and 30 AA filters
+    /// viewport height of 2 and 100 AA filter samples
     pub fn sensible_defaults(dimensions: Dimensions) -> Self {
-        Self::new(1.0, 2.0, dimensions, Point::zeros(), 30)
+        Self::new(1.0, 2.0, dimensions, Point::zeros(), 100)
     }
 
     pub fn cast(&self, u: Float, v: Float) -> Ray {
@@ -74,25 +75,24 @@ impl Camera {
         jitter
     }
 
-    pub fn render<F>(
+    pub fn render(
         &self,
         id: usize,
         dimensions: Dimensions,
         offset: TileCorner,
         world: &World,
-        render_fn: impl Fn(&Ray, &World) -> Color,
     ) -> PngTile {
         let mut canvas = PngTile::with_offset(dimensions, offset);
 
-        for j in offset.1..(offset.1 + dimensions.1) {
-            eprintln!("Thread {id}: {j} / {} scanlines", dimensions.1);
+        for (index, j) in (offset.1..(offset.1 + dimensions.1)).enumerate() {
+            eprintln!("Thread {id}: {index} / {} scanlines", dimensions.1);
 
             for i in offset.0..(offset.0 + dimensions.0) {
                 let mut color = Color::default();
 
                 for (du, dv) in self.jitter_batch().iter() {
                     let ray = self.cast(i as Float + du, j as Float + dv);
-                    color += render_fn(&ray, world);
+                    color += ray_color(&ray, world, 10);
                 }
 
                 color /= self.samples_per_pixel as Float;
@@ -101,6 +101,27 @@ impl Camera {
         }
 
         canvas
+    }
+}
+
+fn ray_color(ray: &Ray, world: &World, depth: usize) -> Color {
+    if depth == 0 {
+        return Color::default();
+    }
+
+    match world.collide(ray, Range(0.001, Float::INFINITY)) {
+        Some(collision) => match collision.material.scatter(ray, &collision) {
+            Some(scatter) => {
+                ray_color(&scatter.scattered, world, depth - 1).component_mul(&scatter.attenuation)
+            }
+            None => Color::default(),
+        },
+        _ => {
+            let unit_direction = ray.direction.normalize();
+            let t = (unit_direction.y + 1.0) / 2.0;
+
+            WHITE.lerp(&Color::new(0.5, 0.7, 1.0), t)
+        }
     }
 }
 

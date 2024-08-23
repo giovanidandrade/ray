@@ -4,15 +4,16 @@ use camera::Ray;
 pub mod plane;
 pub mod sphere;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct Collision {
     pub point: Point,
     pub normal: Vector,
     pub t: Float,
     pub is_front_facing: bool,
+    pub material: std::sync::Arc<dyn material::Material>,
 }
 
-pub trait Geometry {
+pub trait Geometry: std::marker::Send + std::marker::Sync {
     fn collide(&self, ray: &Ray, t_range: Range) -> Option<Collision>;
 }
 
