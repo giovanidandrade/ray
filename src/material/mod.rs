@@ -13,3 +13,4 @@ pub trait Material: std::marker::Send + std::marker::Sync {
 }
 
 pub mod lambertian;
+pub mod metal;
