@@ -16,9 +16,9 @@ const NEAR_ZERO_TOLERANCE: Float = 1e-8;
 
 impl Material for Lambertian {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
-        let scatter_direction = collision.normal + random::random_vector_on_unit_sphere();
+        let mut scatter_direction = collision.normal + random::random_unit_vector();
         if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
-            return None;
+            scatter_direction = collision.normal;
         }
 
         Some(Scatter {
@@ -55,9 +55,9 @@ impl Material for LambertianProb {
             return None;
         }
 
-        let scatter_direction = collision.normal + random::random_vector_on_unit_sphere();
+        let mut scatter_direction = collision.normal + random::random_unit_vector();
         if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
-            return None;
+            scatter_direction = collision.normal;
         }
 
         Some(Scatter {
@@ -80,7 +80,11 @@ impl LambertianApproximation {
 
 impl Material for LambertianApproximation {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
-        let scatter_direction = collision.normal + random::random_on_hemisphere(&collision.normal);
+        let mut scatter_direction =
+            collision.normal + random::random_on_hemisphere(&collision.normal);
+        if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
+            scatter_direction = collision.normal;
+        }
 
         Some(Scatter {
             scattered: Ray::new(collision.point, scatter_direction),

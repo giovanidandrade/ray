@@ -11,7 +11,8 @@ pub fn random_vector(min: Float, max: Float) -> Vector {
     )
 }
 
-pub fn random_vector_on_unit_sphere() -> Vector {
+/// Samples a random unit vector uniformly on the unit sphere
+pub fn random_unit_vector() -> Vector {
     let mut vec = random_vector(-1.0, 1.0);
 
     // While strictly speaking just normalizing would yield a vector on the unit sphere,
@@ -28,7 +29,7 @@ pub fn random_vector_on_unit_sphere() -> Vector {
 
 /// Given a normal vector, returns a random unit vector in the same orientation as the normal vector
 pub fn random_on_hemisphere(normal: &Vector) -> Vector {
-    let mut vec = random_vector_on_unit_sphere();
+    let mut vec = random_unit_vector();
     if normal.dot(&vec) <= 0.0 {
         vec = -vec;
     }
