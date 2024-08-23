@@ -45,9 +45,9 @@ impl Camera {
     }
 
     /// Returns a Camera with the common defaults I use in my renders: unit focal length, origin center and
-    /// viewport height of 2
+    /// viewport height of 2 and 30 AA filters
     pub fn sensible_defaults(dimensions: Dimensions) -> Self {
-        Self::new(1.0, 2.0, dimensions, Point::zeros(), 10)
+        Self::new(1.0, 2.0, dimensions, Point::zeros(), 30)
     }
 
     pub fn cast(&self, u: Float, v: Float) -> Ray {
