@@ -14,29 +14,28 @@ fn main() {
     let camera = Camera::sensible_defaults(image_dims);
 
     let num_cores = threads::estimate_cores();
-    let work = threads::determine_work(image_dims, num_cores);
+    let handles: Vec<_> = threads::determine_work(image_dims, num_cores)
+        .into_iter()
+        .enumerate()
+        .map(|(id, (dims, offset))| {
+            std::thread::spawn(move || {
+                let mut canvas = PngTile::with_offset(dims, offset);
 
-    let mut handles = Vec::new();
-    for (id, (dims, offset)) in work.into_iter().enumerate() {
-        let handle = std::thread::spawn(move || {
-            let mut canvas = PngTile::with_offset(dims, offset);
+                for j in offset.1..(offset.1 + dims.1) {
+                    eprintln!("Thread {id}: {j} / {} scanlines", dims.1);
 
-            for j in offset.1..(offset.1 + dims.1) {
-                eprintln!("Thread {id}: {j} / {} scanlines", dims.1);
+                    for i in offset.0..(offset.0 + dims.0) {
+                        let ray = camera.cast(i as Float, j as Float);
+                        let color = ray_color(&ray);
 
-                for i in offset.0..(offset.0 + dims.0) {
-                    let ray = camera.cast(i as Float, j as Float);
-                    let color = ray_color(&ray);
-
-                    canvas.set(i, j, color);
+                        canvas.set(i, j, color);
+                    }
                 }
-            }
 
-            (offset, canvas)
-        });
-
-        handles.push(handle);
-    }
+                (id, canvas)
+            })
+        })
+        .collect();
 
     threads::join_canvases(handles).export("picture.png");
 }

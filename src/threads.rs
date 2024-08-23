@@ -38,18 +38,13 @@ pub fn determine_work(image_dims: Dimensions, num_cores: usize) -> Vec<(Dimensio
 
 /// Joins canvases vertically based on the y_offset of each tile.
 /// Assumes that each band was created with the division strategy of determine_work
-pub fn join_canvases(handles: Vec<JoinHandle<(TileCorner, PngTile)>>) -> PngTile {
+pub fn join_canvases(handles: Vec<JoinHandle<(usize, PngTile)>>) -> PngTile {
     let mut canvases: Vec<_> = handles
         .into_iter()
         .map(|handle| handle.join().expect("Thread couldn't be joined"))
         .collect();
 
-    canvases.sort_unstable_by(|a, b| {
-        let (TileCorner(_, ay_offset), _) = a;
-        let (TileCorner(_, by_offset), _) = b;
-
-        ay_offset.cmp(by_offset)
-    });
+    canvases.sort_unstable_by(|a, b| a.0.cmp(&b.0));
 
     canvases
         .into_iter()
