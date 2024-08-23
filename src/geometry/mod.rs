@@ -1,7 +1,6 @@
 use super::*;
 use camera::Ray;
 
-pub mod plane;
 pub mod sphere;
 
 #[derive(Clone)]
