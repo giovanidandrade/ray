@@ -3,6 +3,72 @@ use geometry::Geometry;
 use io::PngTile;
 
 #[derive(Debug, Clone, Copy)]
+pub struct CameraBuilder {
+    focal_length: Float,
+    vertical_field_of_view: Float,
+    camera_center: Point,
+}
+
+pub type BuilderResult = Result<(), BuilderError>;
+
+pub enum BuilderError {
+    NonPositiveFocalLength,
+    FovOutOfRange,
+}
+
+impl Default for CameraBuilder {
+    fn default() -> Self {
+        Self {
+            focal_length: 1.0,
+            vertical_field_of_view: std::f32::consts::PI / 2.0,
+            camera_center: Point::zeros(),
+        }
+    }
+}
+
+impl CameraBuilder {
+    /// Creates a default camera with the common defaults I use in my renders: unit focal length, origin center and
+    /// viewport height of 2
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Will error out if the focal length is nonpositive.
+    pub fn set_focal_length(&mut self, length: Float) -> BuilderResult {
+        if length <= 0.0 {
+            return Err(BuilderError::NonPositiveFocalLength);
+        }
+
+        self.focal_length = length;
+        Ok(())
+    }
+
+    /// Will error out if the vertical field of view isn't an angle between 0 and 180 degrees.
+    pub fn set_vertical_field_of_view(&mut self, angle: Float) -> BuilderResult {
+        if Range(0.0, 180.0).not_contains(angle) {
+            return Err(BuilderError::FovOutOfRange);
+        }
+
+        self.vertical_field_of_view = angle * std::f32::consts::PI / 360.0;
+        Ok(())
+    }
+
+    pub fn set_camera_center(&mut self, center: Point) {
+        self.camera_center = center;
+    }
+
+    pub fn build(&self, dimensions: Dimensions, samples_per_pixel: usize) -> Camera {
+        Camera::new(
+            self.focal_length,
+            self.vertical_field_of_view,
+            dimensions,
+            self.camera_center,
+            samples_per_pixel,
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub struct Camera {
     upper_left_pixel_center: Point,
     center: Point,
@@ -14,13 +80,15 @@ pub struct Camera {
 impl Camera {
     pub fn new(
         focal_length: Float,
-        viewport_height: Float,
+        vertical_field_of_view: Float,
         dimensions: Dimensions,
         camera_center: Point,
         samples_per_pixel: usize,
     ) -> Self {
         let Dimensions(image_width, image_height) = dimensions;
 
+        let h = (vertical_field_of_view / 2.0).tan();
+        let viewport_height = 2.0 * h * focal_length;
         let viewport_width = viewport_height * (image_width as Float) / (image_height as Float);
 
         let viewport_u = Vector::new(viewport_width, 0.0, 0.0);
@@ -43,12 +111,6 @@ impl Camera {
             pixel_delta_v,
             samples_per_pixel,
         }
-    }
-
-    /// Returns a Camera with the common defaults I use in my renders: unit focal length, origin center and
-    /// viewport height of 2 and 100 AA filter samples
-    pub fn sensible_defaults(dimensions: Dimensions) -> Self {
-        Self::new(1.0, 2.0, dimensions, Point::zeros(), 100)
     }
 
     pub fn cast(&self, u: Float, v: Float) -> Ray {
