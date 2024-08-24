@@ -3,6 +3,11 @@ use camera::Camera;
 use io::PngTile;
 use std::thread::JoinHandle;
 
+/// Renders the image in a single thread, used mostly for debugging
+pub fn render(image_dimensions: Dimensions, camera: Camera, world: &World) -> PngTile {
+    camera.render(0, image_dimensions, TileCorner(0, 0), &world)
+}
+
 /// Given a camera, a world and a render function, uses as many cores available to render the scene
 pub fn render_parallel(image_dimensions: Dimensions, camera: Camera, world: &World) -> PngTile {
     let mut handles = Vec::new();
