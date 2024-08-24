@@ -137,6 +137,6 @@ impl Ray {
     }
 
     pub fn at(&self, t: Float) -> Point {
-        self.origin.lerp(&self.direction, t)
+        self.origin + t * self.direction
     }
 }
