@@ -13,8 +13,18 @@ impl Dielectric {
         })
     }
 
+    fn reflect(vector: Vector, normal: Vector) -> Vector {
+        vector - 2.0 * vector.dot(&normal) * normal
+    }
+
     fn refract(incoming: Vector, normal: Vector, ri_ratio: Float) -> Vector {
         let cos_theta = incoming.normalize().dot(&normal).min(1.0);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+
+        // From some angles, refraction is impossible
+        if ri_ratio * sin_theta > 1.0 {
+            return Dielectric::reflect(incoming, normal);
+        }
 
         let ray_perpendicular = ri_ratio * (incoming - cos_theta * normal);
         let ray_parallel = normal * (1.0 - ray_perpendicular.norm_squared()).abs().sqrt();
