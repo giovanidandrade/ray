@@ -21,38 +21,34 @@ impl Sphere {
 
 impl Geometry for Sphere {
     fn collide(&self, ray: &Ray, t_range: Range) -> Option<Collision> {
-        let center_vector = self.center - ray.origin;
+        let center_origin = self.center - ray.origin;
 
-        let c = center_vector.norm_squared() - self.radius * self.radius;
-        let minus_half_b = ray.direction.dot(&center_vector);
         let a = ray.direction.norm_squared();
+        let h = ray.direction.dot(&center_origin);
+        let c = center_origin.norm_squared() - self.radius * self.radius;
 
-        let delta = minus_half_b * minus_half_b - a * c;
+        let delta = h * h - a * c;
         if delta < 0.0 {
             return None;
         }
 
         let delta_sqrt = delta.sqrt();
-        let mut root = (minus_half_b - delta_sqrt) / a;
-        if !t_range.contains(root) {
-            root = (minus_half_b + delta_sqrt) / a;
-            if !t_range.contains(root) {
+        let mut root = (h - delta_sqrt) / a;
+        if t_range.not_contains(root) {
+            root = (h + delta_sqrt) / a;
+            if t_range.not_contains(root) {
                 return None;
             }
         }
 
         let glancing_point = ray.at(root);
-        let mut normal = (glancing_point - self.center) / self.radius;
-
-        let is_front_facing = is_front_face(ray, normal);
-        if !is_front_facing {
-            normal = -normal;
-        };
+        let (is_front_facing, outward_normal) =
+            get_face(ray, (glancing_point - self.center) / self.radius);
 
         Some(Collision {
-            t: root,
             point: glancing_point,
-            normal,
+            normal: outward_normal,
+            t: root,
             is_front_facing,
             material: self.material.clone(),
         })

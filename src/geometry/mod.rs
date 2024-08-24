@@ -32,6 +32,12 @@ impl Geometry for World {
     }
 }
 
-fn is_front_face(ray: &Ray, outward_normal: Vector) -> bool {
-    ray.direction.dot(&outward_normal) < 0.0
+/// Given a ray and an outward normal (i.e.: that points towards the ray origin), determines if that
+/// normal is front facing or not and returns one that is guaranteed to point outwards of the geometry
+fn get_face(ray: &Ray, outward_normal: Vector) -> (bool, Vector) {
+    if ray.direction.dot(&outward_normal) > 0.0 {
+        (false, -outward_normal)
+    } else {
+        (true, outward_normal)
+    }
 }
