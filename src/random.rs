@@ -27,6 +27,16 @@ pub fn random_unit_vector() -> Vector {
     vec.normalize()
 }
 
+/// Samples a random vector uniformly in the unit disk
+pub fn random_in_unit_disk() -> Vector {
+    let mut vec = random_vector(-1.0, 1.0);
+    while vec.norm_squared() > 1.0 {
+        vec = random_vector(-1.0, 1.0);
+    }
+
+    vec
+}
+
 /// Given a normal vector, returns a random unit vector in the same orientation as the normal vector
 pub fn random_on_hemisphere(normal: &Vector) -> Vector {
     let mut vec = random_unit_vector();

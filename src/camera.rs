@@ -8,6 +8,8 @@ pub struct CameraBuilder {
     look_from: Point,
     look_at: Point,
     v_up: Vector,
+    defocus_angle: Float,
+    focus_distance: Float,
     max_depth: usize,
 }
 
@@ -18,6 +20,8 @@ pub enum BuilderError {
     FovOutOfRange,
     LookingAtCenter,
     ZeroVup,
+    DefocusAngleOutOfRange,
+    NonPositiveFocusDistance,
     ZeroDepth,
 }
 
@@ -28,6 +32,8 @@ impl Default for CameraBuilder {
             look_from: Point::zeros(),
             look_at: -Point::z(),
             v_up: Vector::y(),
+            defocus_angle: 0.0,
+            focus_distance: 1.0,
             max_depth: 10,
         }
     }
@@ -91,6 +97,26 @@ impl CameraBuilder {
         Ok(())
     }
 
+    /// Will error out if angle isn't in the 0 to 180 degrees range
+    pub fn set_defocus_angle(&mut self, angle: Float) -> BuilderResult {
+        if Range(0.0, 180.0).not_contains(angle) {
+            return Err(BuilderError::DefocusAngleOutOfRange);
+        }
+
+        self.defocus_angle = angle * std::f32::consts::PI / 180.0;
+        Ok(())
+    }
+
+    /// Will error out if distance isn't a positive value   
+    pub fn set_focus_distance(&mut self, distance: Float) -> BuilderResult {
+        if distance < 0.0 {
+            return Err(BuilderError::NonPositiveFocusDistance);
+        }
+
+        self.focus_distance = distance;
+        Ok(())
+    }
+
     pub fn build(&self, dimensions: Dimensions, samples_per_pixel: usize) -> Camera {
         Camera::new(
             self.vertical_field_of_view,
@@ -98,6 +124,8 @@ impl CameraBuilder {
             self.look_from,
             self.look_at,
             self.v_up,
+            self.defocus_angle,
+            self.focus_distance,
             samples_per_pixel,
             self.max_depth,
         )
@@ -110,30 +138,35 @@ pub struct Camera {
     look_from: Point,
     pixel_delta_u: Vector,
     pixel_delta_v: Vector,
+    defocus_angle: Float,
+    defocus_u: Vector,
+    defocus_v: Vector,
     samples_per_pixel: usize,
     max_depth: usize,
 }
 
 impl Camera {
-    pub fn new(
+    /// Turning off the too many args lint since this is only ever called by the builder anyways
+    #[allow(clippy::too_many_arguments)]
+    fn new(
         vertical_field_of_view: Float,
         dimensions: Dimensions,
         look_from: Point,
         look_at: Point,
         v_up: Vector,
+        defocus_angle: Float,
+        focus_distance: Float,
         samples_per_pixel: usize,
         max_depth: usize,
     ) -> Self {
         let Dimensions(image_width, image_height) = dimensions;
 
-        let focal_length = (look_from - look_at).norm();
-
         let h = (vertical_field_of_view / 2.0).tan();
-        let viewport_height = 2.0 * h * focal_length;
+        let viewport_height = 2.0 * h * focus_distance;
         let viewport_width = viewport_height * (image_width as Float) / (image_height as Float);
 
         // Creating the orthonormal basis for the camera
-        let camera_w = (look_from - look_at) / focal_length;
+        let camera_w = (look_from - look_at).normalize();
         let camera_u = v_up.cross(&camera_w);
         let camera_v = camera_w.cross(&camera_u);
 
@@ -144,26 +177,42 @@ impl Camera {
         let pixel_delta_v = viewport_v / (image_height as Float);
 
         let upper_left_corner =
-            look_from - (focal_length * camera_w) - viewport_u / 2.0 - viewport_v / 2.0;
+            look_from - (focus_distance * camera_w) - viewport_u / 2.0 - viewport_v / 2.0;
 
         let upper_left_pixel_center = upper_left_corner + (pixel_delta_u + pixel_delta_v) / 2.0;
+
+        let defocus_radius = focus_distance * (defocus_angle / 2.0).tan();
+        let defocus_u = camera_u * defocus_radius;
+        let defocus_v = camera_v * defocus_radius;
 
         Self {
             upper_left_pixel_center,
             look_from,
             pixel_delta_u,
             pixel_delta_v,
+            defocus_angle,
+            defocus_u,
+            defocus_v,
             samples_per_pixel,
             max_depth,
         }
     }
 
-    pub fn cast(&self, u: Float, v: Float) -> Ray {
-        let direction =
-            self.upper_left_pixel_center + u * self.pixel_delta_u + v * self.pixel_delta_v
-                - self.look_from;
+    fn sample_defocus_disk(&self) -> Vector {
+        let sample = random::random_in_unit_disk();
+        self.look_from + sample.x * self.defocus_u + sample.y * self.defocus_v
+    }
 
-        Ray::new(self.look_from, direction)
+    pub fn cast(&self, u: Float, v: Float) -> Ray {
+        let pixel = self.upper_left_pixel_center + u * self.pixel_delta_u + v * self.pixel_delta_v;
+
+        let origin = if self.defocus_angle <= 0.0 {
+            self.look_from
+        } else {
+            self.sample_defocus_disk()
+        };
+
+        Ray::new(origin, pixel - origin)
     }
 
     fn jitter_batch(&self) -> Vec<(Float, Float)> {
