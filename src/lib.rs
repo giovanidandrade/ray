@@ -32,7 +32,13 @@ pub struct Range(pub Float, pub Float);
 
 impl Range {
     pub fn contains(&self, t: Float) -> bool {
-        t >= self.0 && t <= self.1
+        let Range(min, max) = *self;
+        t >= min && t <= max
+    }
+
+    pub fn not_contains(&self, t: Float) -> bool {
+        let Range(min, max) = *self;
+        t < min || t > max
     }
 }
 
