@@ -13,7 +13,8 @@ pub type Point = nalgebra::Vector3<Float>;
 pub type Vector = nalgebra::Vector3<Float>;
 pub type Color = nalgebra::Vector3<Float>;
 
-pub type World = Vec<std::sync::Arc<dyn geometry::Geometry>>;
+pub type WorldObject = std::sync::Arc<dyn geometry::Geometry>;
+pub type World = Vec<WorldObject>;
 
 // Useful constants
 pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);

@@ -1,6 +1,11 @@
 use super::*;
 use rand::Rng;
 
+pub fn random_float() -> Float {
+    let mut rng = rand::thread_rng();
+    rng.gen::<Float>()
+}
+
 pub fn random_vector(min: Float, max: Float) -> Vector {
     let mut rng = rand::thread_rng();
 

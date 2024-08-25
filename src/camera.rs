@@ -216,14 +216,11 @@ impl Camera {
     }
 
     fn jitter_batch(&self) -> Vec<(Float, Float)> {
-        use rand::Rng;
-
         let mut jitter = Vec::new();
-        let mut rng = rand::thread_rng();
 
         for _ in 0..self.samples_per_pixel {
-            let du = rng.gen::<Float>() - 0.5;
-            let dv = rng.gen::<Float>() - 0.5;
+            let du = random::random_float() - 0.5;
+            let dv = random::random_float() - 0.5;
 
             jitter.push((du, dv));
         }
