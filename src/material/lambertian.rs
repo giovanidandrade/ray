@@ -48,10 +48,7 @@ impl LambertianProb {
 
 impl Material for LambertianProb {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
-        use rand::Rng;
-
-        let sample: Float = rand::thread_rng().gen();
-        if sample < self.probability {
+        if random::random_float() < self.probability {
             return None;
         }
 

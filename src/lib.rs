@@ -2,9 +2,12 @@ pub mod camera;
 pub mod geometry;
 pub mod io;
 pub mod material;
-pub mod random;
 pub mod scene;
-pub mod threads;
+pub mod utils;
+
+// Reexporting some useful and common things
+pub use utils::types::*;
+pub use utils::*;
 
 // Useful Aliases
 pub type Float = f32;
@@ -18,30 +21,6 @@ pub type World = Vec<WorldObject>;
 
 // Useful constants
 pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);
-
-// Convenience Types
-#[derive(Debug, Clone, Copy)]
-pub struct Dimensions(pub usize, pub usize);
-
-/// A wrapper type for the upper left corner of the PNG Tile
-#[derive(Debug, Clone, Copy, Default)]
-pub struct TileCorner(pub usize, pub usize);
-
-#[derive(Debug, Clone, Copy)]
-/// Represents a closed range, i.e.: both endpoints are considered to be part of the range
-pub struct Range(pub Float, pub Float);
-
-impl Range {
-    pub fn contains(&self, t: Float) -> bool {
-        let Range(min, max) = *self;
-        t >= min && t <= max
-    }
-
-    pub fn not_contains(&self, t: Float) -> bool {
-        let Range(min, max) = *self;
-        t < min || t > max
-    }
-}
 
 pub fn preprocess_color(color: Color) -> [u8; 3] {
     [

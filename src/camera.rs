@@ -219,10 +219,8 @@ impl Camera {
         let mut jitter = Vec::new();
 
         for _ in 0..self.samples_per_pixel {
-            let du = random::random_float() - 0.5;
-            let dv = random::random_float() - 0.5;
-
-            jitter.push((du, dv));
+            let random = random::random_vector(-0.5, 0.5);
+            jitter.push((random.x, random.y));
         }
 
         jitter
@@ -233,7 +231,7 @@ impl Camera {
         id: usize,
         dimensions: Dimensions,
         offset: TileCorner,
-        world: &World,
+        geometry: &dyn Geometry,
     ) -> PngTile {
         let mut canvas = PngTile::with_offset(dimensions, offset);
 
@@ -245,7 +243,7 @@ impl Camera {
 
                 for (du, dv) in self.jitter_batch().iter() {
                     let ray = self.cast(i as Float + du, j as Float + dv);
-                    color += ray_color(&ray, world, self.max_depth);
+                    color += ray_color(&ray, geometry, self.max_depth);
                 }
 
                 color /= self.samples_per_pixel as Float;
@@ -257,7 +255,7 @@ impl Camera {
     }
 }
 
-fn ray_color(ray: &Ray, world: &World, depth: usize) -> Color {
+fn ray_color(ray: &Ray, world: &dyn Geometry, depth: usize) -> Color {
     if depth == 0 {
         return Color::default();
     }
