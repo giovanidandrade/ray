@@ -1,4 +1,5 @@
 use super::*;
+use bounding::BoundingBox;
 use material::Material;
 use std::sync::Arc;
 
@@ -7,14 +8,18 @@ pub struct Sphere {
     center: Point,
     radius: Float,
     material: Arc<dyn Material>,
+    bounds: BoundingBox,
 }
 
 impl Sphere {
     pub fn new(center: Point, radius: Float, material: Arc<dyn Material>) -> Arc<Self> {
+        let radius_vec = radius * WHITE;
+        
         Arc::new(Self {
             center,
             radius,
             material,
+            bounds: BoundingBox::from_extrema(center - radius_vec, center + radius_vec)
         })
     }
 }
@@ -52,5 +57,9 @@ impl Geometry for Sphere {
             is_front_facing,
             material: self.material.clone(),
         })
+    }
+    
+    fn bounding_box(&self) -> BoundingBox {
+        self.bounds
     }
 }

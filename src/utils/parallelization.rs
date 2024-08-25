@@ -1,4 +1,5 @@
 use super::*;
+use bounding::hierarchy::BoundingHierarchy;
 use camera::Camera;
 use io::PngTile;
 use std::thread::JoinHandle;
@@ -7,18 +8,15 @@ use std::thread::JoinHandle;
 pub fn render_single_threaded(
     image_dimensions: Dimensions,
     camera: Camera,
-    world: &World,
+    world: &BoundingHierarchy,
 ) -> PngTile {
     camera.render(0, image_dimensions, TileCorner(0, 0), world)
 }
 
 /// Given a camera, a world and a render function, uses as many cores available to render the scene
-pub fn render(image_dimensions: Dimensions, camera: Camera, world: &World) -> PngTile {
+pub fn render(image_dimensions: Dimensions, camera: Camera, world: &BoundingHierarchy) -> PngTile {
     let mut handles = Vec::new();
-    for (id, (dimensions, offset)) in determine_work(image_dimensions)
-        .into_iter()
-        .enumerate()
-    {
+    for (id, (dimensions, offset)) in determine_work(image_dimensions).into_iter().enumerate() {
         let world = world.clone();
         let handle = std::thread::spawn(move || {
             let canvas = camera.render(id, dimensions, offset, &world);

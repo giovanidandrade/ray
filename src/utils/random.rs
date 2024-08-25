@@ -1,6 +1,10 @@
 use super::*;
 use rand::Rng;
 
+pub fn random_index(length: usize) -> usize {
+    rand::thread_rng().gen_range(0..length)
+}
+
 pub fn random_float() -> Float {
     let mut rng = rand::thread_rng();
     rng.gen::<Float>()

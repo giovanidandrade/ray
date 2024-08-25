@@ -11,9 +11,9 @@ fn main() {
     builder.set_vertical_field_of_view(20.0).unwrap();
     builder.set_defocus_angle(0.6).unwrap();
     builder.set_focus_distance(10.0).unwrap();
-    builder.set_max_depth(20).unwrap();
+    builder.set_max_depth(50).unwrap();
 
-    let camera = builder.build(image_dimensions, 100);
+    let camera = builder.build(image_dimensions, 500);
     let world = scene::make_world();
 
     parallelization::render(image_dimensions, camera, &world).export("picture.png");

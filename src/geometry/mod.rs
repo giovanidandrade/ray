@@ -1,4 +1,5 @@
 use super::*;
+use bounding::BoundingBox;
 use camera::Ray;
 
 pub mod sphere;
@@ -14,6 +15,7 @@ pub struct Collision {
 
 pub trait Geometry: std::marker::Send + std::marker::Sync {
     fn collide(&self, ray: &Ray, t_range: Range) -> Option<Collision>;
+    fn bounding_box(&self) -> BoundingBox;
 }
 
 impl Geometry for World {
@@ -29,6 +31,17 @@ impl Geometry for World {
         }
 
         closest_collision
+    }
+
+    fn bounding_box(&self) -> BoundingBox {
+        let empty = Range::union_empty();
+        let mut total_box = BoundingBox::new(empty, empty, empty);
+
+        for elem in self.iter() {
+            total_box = total_box.union(&elem.bounding_box());
+        }
+
+        total_box
     }
 }
 
