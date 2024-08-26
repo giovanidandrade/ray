@@ -4,7 +4,7 @@ use geometry::sphere::Sphere;
 use material::{
     dielectric::Dielectric,
     diffuse::{Glossy, Lambertian},
-    metal::Metal,
+    metal::{Metal, SpecularMetal},
 };
 use random::random_float;
 
@@ -13,9 +13,13 @@ pub fn make_world() -> std::sync::Arc<BoundingHierarchy> {
 
     let ground = Lambertian::new(0.5 * color::WHITE);
 
-    let glass = Dielectric::new(1.5);
-    let steel = Metal::polished(Color::new(0.7, 0.6, 0.5));
     let brown = Glossy::new(Color::new(0.4, 0.2, 0.1));
+    let glass = Dielectric::new(1.5);
+    let steel = SpecularMetal::polished(
+        Color::new(0.7, 0.6, 0.5),
+        Color::new(0.77, 0.78, 0.78),
+        0.78,
+    );
 
     let big_objects: [WorldObject; 4] = [
         Sphere::new(Point::y(), 1.0, glass.clone()),
