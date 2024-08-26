@@ -29,6 +29,10 @@ impl Range {
         }
     }
 
+    pub fn length(&self) -> Float {
+        self.1 - self.0
+    }
+
     pub fn union(&self, other: Range) -> Self {
         let a = self.0.min(other.0);
         let b = self.1.max(other.1);

@@ -18,7 +18,34 @@ pub trait Geometry: std::marker::Send + std::marker::Sync {
     fn bounding_box(&self) -> BoundingBox;
 }
 
-impl Geometry for World {
+impl Geometry for &[WorldObject] {
+    fn collide(&self, ray: &Ray, t_range: Range) -> Option<Collision> {
+        let mut closest_t = t_range.1;
+        let mut closest_collision = None;
+
+        for geometry in self.iter() {
+            if let Some(collision) = geometry.collide(ray, Range(t_range.0, closest_t)) {
+                closest_t = collision.t;
+                closest_collision = Some(collision);
+            }
+        }
+
+        closest_collision
+    }
+
+    fn bounding_box(&self) -> BoundingBox {
+        let empty = Range::union_empty();
+        let mut total_box = BoundingBox::new(empty, empty, empty);
+
+        for elem in self.iter() {
+            total_box = total_box.union(&elem.bounding_box());
+        }
+
+        total_box
+    }
+}
+
+impl Geometry for &mut [WorldObject] {
     fn collide(&self, ray: &Ray, t_range: Range) -> Option<Collision> {
         let mut closest_t = t_range.1;
         let mut closest_collision = None;

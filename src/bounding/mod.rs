@@ -35,7 +35,24 @@ impl BoundingBox {
         }
     }
 
-    fn axes(&self) -> [Range; 3] {
+    /// Returns a value from [0, 2] corresponding to the longest axis, where x is 0 and z is 2
+    pub fn longest_axis(&self) -> usize {
+        if self.x.length() > self.y.length() {
+            2 * (self.z.length() > self.x.length()) as usize
+        } else {
+            1 + (self.z.length() > self.y.length()) as usize
+        }
+    }
+
+    pub fn surface_area(&self) -> Float {
+        let width = self.x.length();
+        let height = self.y.length();
+        let depth = self.z.length();
+
+        2.0 * (width * height + width * depth + height * depth)
+    }
+
+    pub fn axes(&self) -> [Range; 3] {
         [self.x, self.y, self.z]
     }
 
