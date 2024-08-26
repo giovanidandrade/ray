@@ -45,7 +45,7 @@ impl PngTile {
 
         let index = self.index(x, y);
 
-        self.buffer[index..index + 3].copy_from_slice(&preprocess_color(value));
+        self.buffer[index..index + 3].copy_from_slice(&value.to_gamma_corrected_bytes());
     }
 
     /// Glues two tiles together vertically, such that self is on top.

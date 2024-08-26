@@ -13,13 +13,13 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Point, radius: Float, material: Arc<dyn Material>) -> Arc<Self> {
-        let radius_vec = radius * WHITE;
-        
+        let radius_vec = radius * Vector::new(1.0, 1.0, 1.0);
+
         Arc::new(Self {
             center,
             radius,
             material,
-            bounds: BoundingBox::from_extrema(center - radius_vec, center + radius_vec)
+            bounds: BoundingBox::from_extrema(center - radius_vec, center + radius_vec),
         })
     }
 }
@@ -58,7 +58,7 @@ impl Geometry for Sphere {
             material: self.material.clone(),
         })
     }
-    
+
     fn bounding_box(&self) -> BoundingBox {
         self.bounds
     }

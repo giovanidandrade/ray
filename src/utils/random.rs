@@ -20,6 +20,12 @@ pub fn random_vector(min: Float, max: Float) -> Vector {
     )
 }
 
+pub fn random_color() -> Color {
+    let mut rng = rand::thread_rng();
+
+    Color::new(rng.gen::<Float>(), rng.gen::<Float>(), rng.gen::<Float>())
+}
+
 /// Samples a random unit vector uniformly on the unit sphere
 pub fn random_unit_vector() -> Vector {
     let mut vec = random_vector(-1.0, 1.0);
