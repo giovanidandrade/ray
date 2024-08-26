@@ -7,7 +7,7 @@ use random::random_float;
 pub fn make_world() -> std::sync::Arc<BoundingHierarchy> {
     let mut world: World = Vec::new();
 
-    let ground = Lambertian::new(0.5 * WHITE);
+    let ground = Lambertian::new(0.5 * color::WHITE);
 
     let glass = Dielectric::new(1.5);
     let steel = Metal::polished(Color::new(0.7, 0.6, 0.5));

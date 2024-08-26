@@ -13,7 +13,7 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Point, radius: Float, material: Arc<dyn Material>) -> Arc<Self> {
-        let radius_vec = radius * Vector::new(1.0, 1.0, 1.0);
+        let radius_vec = radius * vector::ONES;
 
         Arc::new(Self {
             center,

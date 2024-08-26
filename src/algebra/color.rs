@@ -2,6 +2,9 @@ use std::ops::{Deref, DerefMut};
 
 use super::*;
 
+// Useful constants
+pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);
+
 /// A type made to allow Colors to be accessed via rgb accessors while still leveraging
 /// nalgebra for quick and optimized operations
 #[repr(C)]

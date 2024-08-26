@@ -45,7 +45,7 @@ impl Material for Dielectric {
 
         Some(Scatter {
             scattered: Ray::new(collision.point, refracted.normalize()),
-            attenuation: WHITE,
+            attenuation: color::WHITE,
         })
     }
 }

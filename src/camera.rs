@@ -198,7 +198,7 @@ impl Camera {
         }
     }
 
-    fn sample_defocus_disk(&self) -> Vector {
+    fn sample_defocus_disk(&self) -> Point {
         let sample = random::random_in_unit_disk();
         self.look_from + sample.x * self.defocus_u + sample.y * self.defocus_v
     }
@@ -271,7 +271,7 @@ fn ray_color(ray: &Ray, world: &dyn Geometry, depth: usize) -> Color {
             let unit_direction = ray.direction.normalize();
             let t = (unit_direction.y + 1.0) / 2.0;
 
-            WHITE.lerp(&Color::new(0.5, 0.7, 1.0), t)
+            color::WHITE.lerp(&Color::new(0.5, 0.7, 1.0), t)
         }
     }
 }

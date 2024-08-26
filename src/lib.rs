@@ -15,11 +15,5 @@ pub use utils::*;
 // Useful Aliases
 pub type Float = f32;
 
-pub type Point = nalgebra::Vector3<Float>;
-pub type Vector = nalgebra::Vector3<Float>;
-
 pub type WorldObject = std::sync::Arc<dyn geometry::Geometry>;
 pub type World = Vec<WorldObject>;
-
-// Useful constants
-pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);
