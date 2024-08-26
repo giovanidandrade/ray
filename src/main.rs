@@ -16,5 +16,5 @@ fn main() {
     let camera = builder.build(image_dimensions, 500);
     let world = scene::make_world();
 
-    parallelization::render(image_dimensions, camera, &world).export("picture.png");
+    parallelization::render(image_dimensions, camera, &world, 1).export("picture.png");
 }

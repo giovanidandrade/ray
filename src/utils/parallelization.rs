@@ -2,33 +2,7 @@ use super::*;
 use bounding::hierarchy::BoundingHierarchy;
 use camera::Camera;
 use io::PngTile;
-use std::thread::JoinHandle;
-
-/// Renders the image in a single thread, used mostly for debugging
-pub fn render_single_threaded(
-    image_dimensions: Dimensions,
-    camera: Camera,
-    world: &BoundingHierarchy,
-) -> PngTile {
-    camera.render(0, image_dimensions, TileCorner(0, 0), world)
-}
-
-/// Given a camera, a world and a render function, uses as many cores available to render the scene
-pub fn render(image_dimensions: Dimensions, camera: Camera, world: &BoundingHierarchy) -> PngTile {
-    let mut handles = Vec::new();
-    for (id, (dimensions, offset)) in determine_work(image_dimensions).into_iter().enumerate() {
-        let world = world.clone();
-        let handle = std::thread::spawn(move || {
-            let canvas = camera.render(id, dimensions, offset, &world);
-
-            (id, canvas)
-        });
-
-        handles.push(handle);
-    }
-
-    join_canvases(handles)
-}
+use rayon::prelude::*;
 
 /// Attempts to estimate the number of cores available for parallelism, defaulting to 1 should it not be
 /// able to estimate said value.
@@ -39,35 +13,28 @@ pub fn estimate_cores() -> usize {
     }
 }
 
-/// Divies up work vertically into roughly equal bands based on the estimated number of cores (difference of 1 at most).
-pub fn determine_work(image_dims: Dimensions) -> Vec<(Dimensions, TileCorner)> {
-    determine_work_with_cores(image_dims, estimate_cores())
-}
-
-/// Divies up work vertically into roughly equal bands based on the number of cores (difference of 1 at most).
-pub fn determine_work_with_cores(
-    image_dims: Dimensions,
-    num_cores: usize,
+fn separate_lines(
+    image_dimensions: Dimensions,
+    division_step: usize,
 ) -> Vec<(Dimensions, TileCorner)> {
-    let base_work = image_dims.1 / num_cores;
-    let mut remainder = image_dims.1 % num_cores;
+    let mut total_work = image_dimensions.1;
     let mut y_offset = 0;
 
     let mut results = Vec::new();
-    for _ in 0..num_cores {
-        let extra_work = if remainder != 0 {
-            remainder -= 1;
-            1
-        } else {
-            0
-        };
-
-        let new_dims = Dimensions(image_dims.0, base_work + extra_work);
+    while total_work > division_step {
+        let tile_dimensions = Dimensions(image_dimensions.0, division_step);
         let corner = TileCorner(0, y_offset);
 
-        y_offset += base_work + extra_work;
+        y_offset += division_step;
+        total_work -= division_step;
 
-        results.push((new_dims, corner))
+        results.push((tile_dimensions, corner))
+    }
+
+    if total_work != 0 {
+        let tile_dimensions = Dimensions(image_dimensions.0, total_work);
+        let corner = TileCorner(0, y_offset);
+        results.push((tile_dimensions, corner));
     }
 
     results
@@ -75,17 +42,45 @@ pub fn determine_work_with_cores(
 
 /// Joins canvases vertically based on the y_offset of each tile.
 /// Assumes that each band was created with the division strategy of determine_work
-pub fn join_canvases(handles: Vec<JoinHandle<(usize, PngTile)>>) -> PngTile {
-    let mut canvases: Vec<_> = handles
-        .into_iter()
-        .map(|handle| handle.join().expect("Thread couldn't be joined"))
-        .collect();
-
-    canvases.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+pub fn glue_canvases(mut canvases: Vec<(usize, PngTile)>) -> PngTile {
+    canvases.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
     canvases
         .into_iter()
         .map(|(_, canvas)| canvas)
         .reduce(|acc, elem| acc.join_vertical(elem))
-        .unwrap()
+        .expect("There should not be an empty list of canvases")
+}
+
+/// Renders the thread in a single thread. Useful mostly for debugging.
+pub fn render_single_threaded(
+    image_dimensions: Dimensions,
+    camera: Camera,
+    geometry: &BoundingHierarchy,
+) -> PngTile {
+    render(image_dimensions, camera, geometry, image_dimensions.1)
+}
+
+/// Renders the scene by dividing it so that each worker has division_step lines to render,
+/// with the possible exception of the last one, who has the remainder.
+///
+/// Will error out if the division_step is 0
+pub fn render(
+    image_dimensions: Dimensions,
+    camera: Camera,
+    geometry: &BoundingHierarchy,
+    division_step: usize,
+) -> PngTile {
+    assert_ne! { division_step, 0 }
+
+    let canvases: Vec<_> = separate_lines(image_dimensions, division_step)
+        .par_iter()
+        .enumerate()
+        .map(|(id, (dimensions, offset))| {
+            let canvas = camera.render(id, *dimensions, *offset, &geometry.clone());
+            (id, canvas)
+        })
+        .collect();
+
+    glue_canvases(canvases)
 }
