@@ -90,15 +90,15 @@ impl IndexMut<usize> for Color {
     }
 }
 
-impl Into<Point> for Color {
-    fn into(self) -> Point {
-        Point { data: self.data }
+impl From<Point> for Color {
+    fn from(value: Point) -> Self {
+        Self { data: value.data }
     }
 }
 
-impl Into<Vector> for Color {
-    fn into(self) -> Vector {
-        Vector { data: self.data }
+impl From<Vector> for Color {
+    fn from(value: Vector) -> Self {
+        Self { data: value.data }
     }
 }
 
@@ -207,15 +207,15 @@ impl IndexMut<usize> for Point {
     }
 }
 
-impl Into<Vector> for Point {
-    fn into(self) -> Vector {
-        Vector { data: self.data }
+impl From<Color> for Point {
+    fn from(value: Color) -> Self {
+        Self { data: value.data }
     }
 }
 
-impl Into<Color> for Point {
-    fn into(self) -> Color {
-        Color { data: self.data }
+impl From<Vector> for Point {
+    fn from(value: Vector) -> Self {
+        Self { data: value.data }
     }
 }
 
@@ -314,14 +314,14 @@ impl IndexMut<usize> for Vector {
     }
 }
 
-impl Into<Point> for Vector {
-    fn into(self) -> Point {
-        Point { data: self.data }
+impl From<Point> for Vector {
+    fn from(value: Point) -> Self {
+        Self { data: value.data }
     }
 }
 
-impl Into<Color> for Vector {
-    fn into(self) -> Color {
-        Color { data: self.data }
+impl From<Color> for Vector {
+    fn from(value: Color) -> Self {
+        Self { data: value.data }
     }
 }
