@@ -13,5 +13,5 @@ pub trait Material: std::marker::Send + std::marker::Sync {
 }
 
 pub mod dielectric;
-pub mod lambertian;
+pub mod diffuse;
 pub mod metal;

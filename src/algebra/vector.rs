@@ -92,4 +92,10 @@ impl Vector {
             data: self.data.cross(&other.data),
         }
     }
+
+    #[inline]
+    /// Reflects a vector over a normal vector
+    pub fn reflect(&self, normal: Vector) -> Self {
+        *self - 2.0 * normal.dot(self) * normal
+    }
 }

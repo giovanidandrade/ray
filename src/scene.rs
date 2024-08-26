@@ -1,7 +1,11 @@
 use super::*;
 use bounding::hierarchy::BoundingHierarchy;
 use geometry::sphere::Sphere;
-use material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
+use material::{
+    dielectric::Dielectric,
+    diffuse::{Glossy, Lambertian},
+    metal::Metal,
+};
 use random::random_float;
 
 pub fn make_world() -> std::sync::Arc<BoundingHierarchy> {
@@ -11,7 +15,7 @@ pub fn make_world() -> std::sync::Arc<BoundingHierarchy> {
 
     let glass = Dielectric::new(1.5);
     let steel = Metal::polished(Color::new(0.7, 0.6, 0.5));
-    let brown = Lambertian::new(Color::new(0.4, 0.2, 0.1));
+    let brown = Glossy::new(Color::new(0.4, 0.2, 0.1));
 
     let big_objects: [WorldObject; 4] = [
         Sphere::new(Point::y(), 1.0, glass.clone()),
@@ -34,7 +38,7 @@ pub fn make_world() -> std::sync::Arc<BoundingHierarchy> {
                 let p = random::random_float();
                 if p < 0.8 {
                     let albedo = random::random_color();
-                    let material = Lambertian::new(albedo);
+                    let material = Glossy::new(albedo);
 
                     world.push(Sphere::new(center, 0.2, material));
                 } else if p < 0.95 {

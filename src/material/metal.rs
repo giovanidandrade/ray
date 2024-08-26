@@ -20,16 +20,12 @@ impl Metal {
             fuzziness: 0.0,
         })
     }
-
-    fn reflect(vector: Vector, normal: Vector) -> Vector {
-        vector - 2.0 * vector.dot(&normal) * normal
-    }
 }
 
 impl Material for Metal {
     fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<Scatter> {
-        let scattered = Metal::reflect(ray.direction, collision.normal)
-            + self.fuzziness * random::random_unit_vector();
+        let scattered =
+            ray.direction.reflect(collision.normal) + self.fuzziness * random::random_unit_vector();
 
         Some(Scatter {
             scattered: Ray::new(collision.point, scattered),
