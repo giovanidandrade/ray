@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use super::*;
-use camera::Ray;
+use render::Ray;
 
 pub mod hierarchy;
 

@@ -1,8 +1,8 @@
 use super::*;
 use bounding::hierarchy::BoundingHierarchy;
-use camera::Camera;
 use io::PngTile;
 use rayon::prelude::*;
+use render::{Camera, Renderer};
 
 /// Attempts to estimate the number of cores available for parallelism, defaulting to 1 should it not be
 /// able to estimate said value.
@@ -53,31 +53,37 @@ pub fn glue_canvases(mut canvases: Vec<(usize, PngTile)>) -> PngTile {
 }
 
 /// Renders the thread in a single thread. Useful mostly for debugging.
-pub fn render_single_threaded(
+pub fn render_single_threaded<C>(
     image_dimensions: Dimensions,
-    camera: Camera,
+    renderer: Renderer<C>,
     geometry: &BoundingHierarchy,
-) -> PngTile {
-    render(image_dimensions, camera, geometry, image_dimensions.1)
+) -> PngTile
+where
+    C: Camera,
+{
+    render(image_dimensions, renderer, geometry, image_dimensions.1)
 }
 
 /// Renders the scene by dividing it so that each worker has division_step lines to render,
 /// with the possible exception of the last one, who has the remainder.
 ///
 /// Will error out if the division_step is 0
-pub fn render(
+pub fn render<C>(
     image_dimensions: Dimensions,
-    camera: Camera,
+    renderer: Renderer<C>,
     geometry: &BoundingHierarchy,
     division_step: usize,
-) -> PngTile {
+) -> PngTile
+where
+    C: Camera,
+{
     assert_ne! { division_step, 0 }
 
     let canvases: Vec<_> = separate_lines(image_dimensions, division_step)
         .par_iter()
         .enumerate()
         .map(|(id, (dimensions, offset))| {
-            let canvas = camera.render(id, *dimensions, *offset, &geometry.clone());
+            let canvas = renderer.render(id, *dimensions, *offset, &geometry.clone());
             (id, canvas)
         })
         .collect();

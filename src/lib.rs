@@ -1,9 +1,9 @@
 pub mod algebra;
 pub mod bounding;
-pub mod camera;
 pub mod geometry;
 pub mod io;
 pub mod material;
+pub mod render;
 pub mod scene;
 pub mod utils;
 

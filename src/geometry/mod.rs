@@ -1,6 +1,6 @@
 use super::*;
 use bounding::BoundingBox;
-use camera::Ray;
+use render::Ray;
 
 pub mod sphere;
 

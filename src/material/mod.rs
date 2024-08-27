@@ -1,6 +1,6 @@
 use super::*;
-use camera::Ray;
 use geometry::Collision;
+use render::Ray;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Scatter {
