@@ -3,9 +3,11 @@ use geometry::Geometry;
 use io::PngTile;
 
 pub mod pinhole;
+pub mod thin_lens;
 
 // Reexporting useful types
 pub use pinhole::Pinhole;
+pub use thin_lens::ThinLens;
 
 pub trait Camera: std::marker::Send + std::marker::Sync {
     fn cast(&self, u: Float, v: Float) -> Ray;
