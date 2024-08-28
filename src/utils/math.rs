@@ -1,6 +1,7 @@
 use super::*;
 
 pub const PI: Float = std::f32::consts::PI;
+pub const ZERO_TOL: Float = 1e-8;
 
 #[inline]
 pub fn schlick(r0: Float, cos_theta: Float) -> Float {

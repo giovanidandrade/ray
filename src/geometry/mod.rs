@@ -2,6 +2,7 @@ use super::*;
 use bounding::BoundingBox;
 use render::Ray;
 
+pub mod parallelogram;
 pub mod sphere;
 
 #[derive(Clone)]

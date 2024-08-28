@@ -49,4 +49,9 @@ impl Range {
         let Range(min, max) = *self;
         t < min || t > max
     }
+
+    pub fn expand(&self, delta: Float) -> Self {
+        let padding = delta / 2.0;
+        Self(self.0 + padding, self.1 + padding)
+    }
 }

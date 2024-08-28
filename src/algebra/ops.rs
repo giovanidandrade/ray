@@ -91,12 +91,14 @@ impl IndexMut<usize> for Color {
 }
 
 impl From<Point> for Color {
+    #[inline]
     fn from(value: Point) -> Self {
         Self { data: value.data }
     }
 }
 
 impl From<Vector> for Color {
+    #[inline]
     fn from(value: Vector) -> Self {
         Self { data: value.data }
     }
@@ -208,12 +210,14 @@ impl IndexMut<usize> for Point {
 }
 
 impl From<Color> for Point {
+    #[inline]
     fn from(value: Color) -> Self {
         Self { data: value.data }
     }
 }
 
 impl From<Vector> for Point {
+    #[inline]
     fn from(value: Vector) -> Self {
         Self { data: value.data }
     }
@@ -315,12 +319,14 @@ impl IndexMut<usize> for Vector {
 }
 
 impl From<Point> for Vector {
+    #[inline]
     fn from(value: Point) -> Self {
         Self { data: value.data }
     }
 }
 
 impl From<Color> for Vector {
+    #[inline]
     fn from(value: Color) -> Self {
         Self { data: value.data }
     }

@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
 use super::*;
+use math::ZERO_TOL;
 use render::Ray;
 
 pub mod hierarchy;
@@ -14,17 +15,23 @@ pub struct BoundingBox {
 
 impl BoundingBox {
     pub fn new(x: Range, y: Range, z: Range) -> Self {
-        Self { x, y, z }
+        let mut bounds = Self { x, y, z };
+        bounds.pad_to_minima();
+
+        bounds
     }
 
     /// Builds a box given two points that represent opposite extrema, i.e.: separated by the diagonal
     /// of the box
     pub fn from_extrema(p: Point, q: Point) -> Self {
-        Self {
+        let mut bounds = Self {
             x: Range(p.x.min(q.x), p.x.max(q.x)),
             y: Range(p.y.min(q.y), p.y.max(q.y)),
             z: Range(p.z.min(q.z), p.z.max(q.z)),
-        }
+        };
+        bounds.pad_to_minima();
+
+        bounds
     }
 
     pub fn union(&self, other: &Self) -> Self {
@@ -90,5 +97,17 @@ impl BoundingBox {
         }
 
         Some(range)
+    }
+
+    fn pad_to_minima(&mut self) {
+        if self.x.length() < ZERO_TOL {
+            self.x = self.x.expand(ZERO_TOL);
+        }
+        if self.y.length() < ZERO_TOL {
+            self.y = self.y.expand(ZERO_TOL);
+        }
+        if self.z.length() < ZERO_TOL {
+            self.z = self.z.expand(ZERO_TOL);
+        }
     }
 }

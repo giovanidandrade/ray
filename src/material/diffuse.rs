@@ -1,4 +1,5 @@
 use super::*;
+use math::ZERO_TOL;
 use std::sync::Arc;
 
 /// Idealization of matte surfaces: always scatters light randomly when hit
@@ -13,12 +14,10 @@ impl Lambertian {
     }
 }
 
-const NEAR_ZERO_TOLERANCE: Float = 1e-8;
-
 impl Material for Lambertian {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<Scatter> {
         let mut scatter_direction = collision.normal + random::random_unit_vector();
-        if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
+        if scatter_direction.norm_squared() < ZERO_TOL {
             scatter_direction = collision.normal;
         }
 
@@ -51,7 +50,7 @@ impl Material for Glossy {
             collision.normal + random::random_unit_vector()
         };
 
-        if scatter_direction.norm_squared() < NEAR_ZERO_TOLERANCE {
+        if scatter_direction.norm_squared() < ZERO_TOL {
             scatter_direction = collision.normal;
         }
 
