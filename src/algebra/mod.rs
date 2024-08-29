@@ -8,15 +8,15 @@ pub mod vector;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Color {
-    data: Vector3<Float>,
+    pub data: Vector3<Float>,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Point {
-    data: Vector3<Float>,
+    pub data: Vector3<Float>,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Vector {
-    data: Vector3<Float>,
+    pub data: Vector3<Float>,
 }

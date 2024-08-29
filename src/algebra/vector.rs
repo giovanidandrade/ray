@@ -98,4 +98,10 @@ impl Vector {
     pub fn reflect(&self, normal: Vector) -> Self {
         *self - 2.0 * normal.dot(self) * normal
     }
+
+    #[inline]
+    /// Returns the unified representation of this vector
+    pub fn unified(&self) -> nalgebra::Vector4<Float> {
+        nalgebra::Vector4::<Float>::new(self.x, self.y, self.z, 0.0)
+    }
 }

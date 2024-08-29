@@ -60,4 +60,10 @@ impl Point {
     pub fn z() -> Self {
         Self { data: Vector3::z() }
     }
+
+    #[inline]
+    /// Returns the unified representation of this vector
+    pub fn unified(&self) -> nalgebra::Vector4<Float> {
+        nalgebra::Vector4::<Float>::new(self.x, self.y, self.z, 1.0)
+    }
 }

@@ -5,6 +5,7 @@ pub mod io;
 pub mod material;
 pub mod render;
 pub mod scene;
+pub mod transform;
 pub mod utils;
 
 // Reexporting some useful and common things
