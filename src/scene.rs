@@ -1,6 +1,6 @@
 use super::*;
 use bounding::hierarchy::BoundingHierarchy;
-use geometry::{parallelogram::Parallelogram, sphere::Ellipsoid};
+use geometry::{flat::Parallelogram, sphere::Ellipsoid};
 use material::{dielectric::Dielectric, diffuse::Lambertian, metal::Metal};
 use render::{Pinhole, ThinLens};
 use std::sync::Arc;
@@ -41,12 +41,14 @@ pub fn make_world2(image_dimensions: Dimensions) -> (Pinhole, Arc<BoundingHierar
         Ellipsoid::sphere(Point::new(0.0, -100.5, -1.0), 100.0, ground),
         Ellipsoid::sphere(Point::new(-1.0, 0.0, -1.0), 0.5, glass),
         Ellipsoid::sphere(Point::new(-1.0, 0.0, -1.0), 0.4, bubble),
-        Ellipsoid::new(
-            Point::new(0.0, 0.5, -1.2),
-            Vector::new(0.5, 1.0, 0.5),
-            center,
+        Ellipsoid::sphere(Point::new(0.0, 0.0, -1.2), 0.5, center),
+        Ellipsoid::sphere(Point::new(1.0, 0.0, -1.0), 0.5, metal.clone()),
+        Parallelogram::new(
+            Point::new(-1.0, 0.6, -1.0),
+            2.0 * Vector::x(),
+            Vector::new(0.0, 1.0, 1.0),
+            metal,
         ),
-        Ellipsoid::sphere(Point::new(1.0, 0.0, -1.0), 0.5, metal),
     ];
 
     (

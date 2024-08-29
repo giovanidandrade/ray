@@ -63,16 +63,16 @@ impl Geometry for Ellipsoid {
         }
 
         let glancing_point = ray.at(root);
-        let normal: Vector = glancing_point.into();
-        let (is_front_facing, outward_normal) = get_face(original_ray, self.transform * normal);
-
-        Some(Collision {
-            point: self.transform / glancing_point,
-            normal: outward_normal.normalize(),
+        let mut collision = Collision {
+            point: glancing_point,
+            normal: glancing_point.into(),
             t: root,
-            is_front_facing,
+            is_front_facing: true,
             material: self.material.clone(),
-        })
+        };
+        collision.apply(&original_ray, self.transform);
+
+        Some(collision)
     }
 
     fn bounding_box(&self) -> BoundingBox {

@@ -1,8 +1,9 @@
 use super::*;
 use bounding::BoundingBox;
 use render::Ray;
+use transform::Transform;
 
-pub mod parallelogram;
+pub mod flat;
 pub mod sphere;
 
 #[derive(Clone)]
@@ -12,6 +13,16 @@ pub struct Collision {
     pub t: Float,
     pub is_front_facing: bool,
     pub material: std::sync::Arc<dyn material::Material>,
+}
+
+impl Collision {
+    pub fn apply(&mut self, ray: &Ray, transform: Transform) {
+        self.point = transform / self.point;
+        let (is_front_facing, normal) = get_face(ray, transform * self.normal);
+
+        self.is_front_facing = is_front_facing;
+        self.normal = normal.normalize();
+    }
 }
 
 pub trait Geometry: std::marker::Send + std::marker::Sync {

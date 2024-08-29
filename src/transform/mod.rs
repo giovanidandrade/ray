@@ -35,6 +35,15 @@ impl Transform {
         }
     }
 
+    /// Makes a transform from its inverse.
+    /// Will error out if the matrix isn't invertible.
+    pub fn from_inverse(inverse: Matrix) -> Self {
+        Self {
+            inverse,
+            matrix: inverse.try_inverse().unwrap(),
+        }
+    }
+
     /// Makes a transform from the matrix and inverse.
     /// Assumes that:
     /// - the matrix given is invertible
@@ -94,5 +103,47 @@ impl Transform {
         let inverse = Matrix::from_diagonal(&Vec4::new(1.0 / x, 1.0 / y, 1.0 / z, 1.0));
 
         Self { matrix, inverse }
+    }
+
+    /// Returns the transform that maps `u` to (1, 0, 0), `v` to (0, 1, 0) and `u x v` to (0, 0, 1)
+    /// Will error out if the set {u, v} is linearly dependent
+    pub fn make_xy(u: Vector, v: Vector) -> Self {
+        assert! { u.norm_squared() > ZERO_TOL }
+        assert! { v.norm_squared() > ZERO_TOL }
+
+        let w = u.cross(&v);
+        assert! { w.norm_squared() > ZERO_TOL }
+
+        let inverse = Matrix::from_columns(&[u.unified(), v.unified(), w.unified(), Vec4::w()]);
+
+        Self::from_inverse(inverse)
+    }
+
+    /// Returns the transform that maps `u` to (0, 1, 0), `v` to (0, 0, 1) and `u x v` to (1, 0, 0)
+    /// Will error out if the set {u, v} is linearly dependent
+    pub fn make_yz(u: Vector, v: Vector) -> Self {
+        assert! { u.norm_squared() > ZERO_TOL }
+        assert! { v.norm_squared() > ZERO_TOL }
+
+        let w = u.cross(&v);
+        assert! { w.norm_squared() > ZERO_TOL }
+
+        let inverse = Matrix::from_columns(&[w.unified(), u.unified(), v.unified(), Vec4::w()]);
+
+        Self::from_inverse(inverse)
+    }
+
+    /// Returns the transform that maps `u` to (1, 0, 0), `v` to (0, 0, 1) and `u x v` to (0, 1, 0)
+    /// Will error out if the set {u, v} is linearly dependent
+    pub fn make_xz(u: Vector, v: Vector) -> Self {
+        assert! { u.norm_squared() > ZERO_TOL }
+        assert! { v.norm_squared() > ZERO_TOL }
+
+        let w = u.cross(&v);
+        assert! { w.norm_squared() > ZERO_TOL }
+
+        let inverse = Matrix::from_columns(&[u.unified(), w.unified(), v.unified(), Vec4::w()]);
+
+        Self::from_inverse(inverse)
     }
 }
